@@ -1,0 +1,5 @@
+{
+  "name": "Banner Cropping Tool",
+  "description": "A simple and powerful tool to crop and resize your images. Drag and drop an image, select from a variety of presets for social media and more, adjust the position and scale with intuitive controls, and export in your desired format like PNG, JPG, or WebP.",
+  "requestFramePermissions": []
+}
