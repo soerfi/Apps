@@ -73,9 +73,12 @@ async def download_video(req: DownloadRequest, background_tasks: BackgroundTasks
                 }],
             })
         else:
+            # More flexible format selection with multiple fallbacks
             ydl_opts.update({
-                'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+                'format': 'bv*+ba/b',  # Best video + best audio, or best single file
+                'merge_output_format': 'mp4',  # Merge to mp4 if needed
             })
+
 
         print(f"Downloading URL: {req.url} with options: {ydl_opts}")
 
