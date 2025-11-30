@@ -91,12 +91,24 @@ async def download_video(req: DownloadRequest, background_tasks: BackgroundTasks
                 # yt-dlp changes extension to mp3
                 filename = os.path.splitext(filename)[0] + '.mp3'
 
-        print(f"Download complete: {filename}")
+        print(f"Expected filename: {filename}")
 
-        if not os.path.exists(filename):
-            raise HTTPException(status_code=500, detail=f"File not found after download: {filename}")
+        # Find the actual downloaded file (might have different name)
+        # List all files in the work directory
+        downloaded_files = [f for f in os.listdir(work_dir) if os.path.isfile(os.path.join(work_dir, f))]
+        print(f"Files in work directory: {downloaded_files}")
 
-        final_file = filename
+        if not downloaded_files:
+            raise HTTPException(status_code=500, detail="No file was downloaded")
+
+        # Use the first (and should be only) file
+        actual_filename = os.path.join(work_dir, downloaded_files[0])
+        print(f"Using file: {actual_filename}")
+
+        if not os.path.exists(actual_filename):
+            raise HTTPException(status_code=500, detail=f"File not found: {actual_filename}")
+
+        final_file = actual_filename
 
         # Crop if requested
         if req.crop_start or req.crop_end:
