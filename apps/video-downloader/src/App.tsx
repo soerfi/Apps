@@ -32,8 +32,15 @@ function App() {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.detail || 'Download failed')
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const error = await response.json()
+          throw new Error(error.detail || 'Download failed')
+        } else {
+          const text = await response.text();
+          console.error("Server Error Response:", text);
+          throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
       }
 
       // Handle file download
