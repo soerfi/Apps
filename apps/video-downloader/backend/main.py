@@ -37,10 +37,16 @@ async def download_video(req: DownloadRequest, background_tasks: BackgroundTasks
     os.makedirs(work_dir, exist_ok=True)
 
     try:
-        # Configure yt-dlp
+        # Configure yt-dlp with more robust options
         ydl_opts = {
             'outtmpl': os.path.join(work_dir, '%(title)s.%(ext)s'),
-            'quiet': True,
+            'quiet': False,
+            'no_warnings': False,
+            'nocheckcertificate': True,
+            'ignoreerrors': False, # We want to catch errors
+            'logtostderr': True,
+            'source_address': '0.0.0.0', # Force IPv4
+            # 'geo_bypass': True,
         }
 
         if req.format == 'audio':
@@ -57,6 +63,8 @@ async def download_video(req: DownloadRequest, background_tasks: BackgroundTasks
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             })
 
+        print(f"Downloading URL: {req.url} with options: {ydl_opts}")
+
         # Download
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(req.url, download=True)
@@ -66,8 +74,10 @@ async def download_video(req: DownloadRequest, background_tasks: BackgroundTasks
                 # yt-dlp changes extension to mp3
                 filename = os.path.splitext(filename)[0] + '.mp3'
 
+        print(f"Download complete: {filename}")
+
         if not os.path.exists(filename):
-            raise HTTPException(status_code=500, detail="Download failed")
+            raise HTTPException(status_code=500, detail=f"File not found after download: {filename}")
 
         final_file = filename
 
@@ -111,6 +121,9 @@ async def download_video(req: DownloadRequest, background_tasks: BackgroundTasks
         )
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"Error processing request: {e}")
         cleanup_file(work_dir)
         raise HTTPException(status_code=500, detail=str(e))
 
