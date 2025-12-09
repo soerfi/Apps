@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      - DOWNLOAD_DIR=/downloads
+      - CLEANUP_DELAY=300
+    volumes:
+      - ./downloads:/downloads
+    restart: unless-stopped
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./downloads:/downloads
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

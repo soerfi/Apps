@@ -1,7 +1,7 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
-# ffmpeg + ca-certificates
-RUN apt-get update && apt-get install -y ffmpeg ca-certificates && rm -rf /var/lib/apt/lists/*
+# ffmpeg + ca-certificates (using apk for Alpine)
+RUN apk add --no-cache ffmpeg ca-certificates
 
 WORKDIR /app
 COPY requirements.txt .
