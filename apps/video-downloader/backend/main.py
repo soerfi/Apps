@@ -189,7 +189,7 @@ class Style(BaseModel):
     imageUrl: str  # Relative URL or Base64 (we'll store as file and serve url)
     timestamp: int
 
-@app.get("/styles")
+@app.get("/styles/")
 def list_styles():
     styles = []
     if not os.path.exists(STYLES_DIR):
@@ -212,7 +212,7 @@ class PublishStyleRequest(BaseModel):
     prompt: str
     imageData: str # Base64
 
-@app.post("/styles")
+@app.post("/styles/")
 def publish_style(req: PublishStyleRequest):
     try:
         import time
