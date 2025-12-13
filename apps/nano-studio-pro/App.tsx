@@ -507,10 +507,13 @@ const App: React.FC = () => {
                 setProcessingState(prev => ({ ...prev, statusMessage: msg }));
             };
 
+            // For Lifestyle, use the System Template as the prompt, and pass lifestyleContext as additional details
+            const promptToSend = selectedPreset.id === PresetType.LIFESTYLE ? (selectedPreset.promptTemplate || "") : customPrompt;
+
             const results = await processImagesWithGemini(
                 sourceImages,
                 selectedPreset.id,
-                customPrompt,
+                promptToSend,
                 apiKey,
                 imageQuality,
                 updateStatus,
@@ -1189,7 +1192,7 @@ const App: React.FC = () => {
                                                         {['1:1', '4:3', '16:9'].map(ratio => (
                                                             <button
                                                                 key={ratio}
-                                                                onClick={() => setLifestyleRatio(ratio)}
+                                                                onClick={() => setLifestyleRatio(prev => prev === ratio ? '' : ratio)}
                                                                 className={`flex-1 text-xs font-medium py-2 rounded-lg border transition-all ${lifestyleRatio === ratio ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 bg-white hover:border-slate-300 text-slate-600'}`}
                                                             >
                                                                 {ratio}
@@ -1257,62 +1260,64 @@ const App: React.FC = () => {
                                             </div>
                                         )}
 
-                                        <div>
-                                            <div className="flex items-center justify-between mb-2">
-                                                <label className="text-sm font-medium text-slate-700">
-                                                    Task Instructions (System Prompt)
-                                                </label>
-                                                {!isNamingPreset ? (
-                                                    <button
-                                                        onClick={initiateSave}
-                                                        className={`text-xs flex items-center gap-1 font-medium transition-colors ${customPrompt.trim() || referenceImage ? 'text-blue-600 hover:text-blue-700' : 'text-slate-300 cursor-not-allowed'}`}
-                                                        disabled={!customPrompt.trim() || (referenceImage && selectedPreset.id === PresetType.BG_REMOVE_REPAIR)} // Disabled if ref only & BG repair selected
-                                                        title="Save current prompt & reference to library"
-                                                    >
-                                                        <Save size={12} /> Save Preset
-                                                    </button>
-                                                ) : (
-                                                    <div className="flex items-center gap-1">
-                                                        <div className="flex flex-col gap-1 items-end">
-                                                            <div className="flex items-center gap-1">
-                                                                <input
-                                                                    autoFocus
-                                                                    onFocus={(e) => e.target.select()}
-                                                                    type="text"
-                                                                    placeholder="Preset Name"
-                                                                    className="text-xs border border-blue-300 rounded px-1 py-0.5 w-24 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white text-slate-900"
-                                                                    value={newPresetName}
-                                                                    onChange={(e) => setNewPresetName(e.target.value)}
-                                                                    onKeyDown={(e) => e.key === 'Enter' && (isPublishing ? handlePublishPrompt() : confirmSave())}
-                                                                />
-                                                                <button onClick={() => isPublishing ? handlePublishPrompt() : confirmSave()} className="text-green-600 hover:text-green-700 p-0.5">
-                                                                    {isPublishing ? <div className="animate-spin"><Loader2 size={14} /></div> : <Check size={14} />}
-                                                                </button>
-                                                                <button onClick={cancelSave} className="text-red-500 hover:text-red-600 p-0.5"><X size={14} /></button>
+                                        {selectedPreset.id !== PresetType.LIFESTYLE && (
+                                            <div>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <label className="text-sm font-medium text-slate-700">
+                                                        Task Instructions (System Prompt)
+                                                    </label>
+                                                    {!isNamingPreset ? (
+                                                        <button
+                                                            onClick={initiateSave}
+                                                            className={`text-xs flex items-center gap-1 font-medium transition-colors ${customPrompt.trim() || referenceImage ? 'text-blue-600 hover:text-blue-700' : 'text-slate-300 cursor-not-allowed'}`}
+                                                            disabled={!customPrompt.trim() || (referenceImage && selectedPreset.id === PresetType.BG_REMOVE_REPAIR)} // Disabled if ref only & BG repair selected
+                                                            title="Save current prompt & reference to library"
+                                                        >
+                                                            <Save size={12} /> Save Preset
+                                                        </button>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1">
+                                                            <div className="flex flex-col gap-1 items-end">
+                                                                <div className="flex items-center gap-1">
+                                                                    <input
+                                                                        autoFocus
+                                                                        onFocus={(e) => e.target.select()}
+                                                                        type="text"
+                                                                        placeholder="Preset Name"
+                                                                        className="text-xs border border-blue-300 rounded px-1 py-0.5 w-24 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white text-slate-900"
+                                                                        value={newPresetName}
+                                                                        onChange={(e) => setNewPresetName(e.target.value)}
+                                                                        onKeyDown={(e) => e.key === 'Enter' && (isPublishing ? handlePublishPrompt() : confirmSave())}
+                                                                    />
+                                                                    <button onClick={() => isPublishing ? handlePublishPrompt() : confirmSave()} className="text-green-600 hover:text-green-700 p-0.5">
+                                                                        {isPublishing ? <div className="animate-spin"><Loader2 size={14} /></div> : <Check size={14} />}
+                                                                    </button>
+                                                                    <button onClick={cancelSave} className="text-red-500 hover:text-red-600 p-0.5"><X size={14} /></button>
+                                                                </div>
+                                                                <label className="flex items-center gap-1 cursor-pointer select-none">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={isPublishing}
+                                                                        onChange={(e) => setIsPublishing(e.target.checked)}
+                                                                        className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3 h-3"
+                                                                    />
+                                                                    <span className="text-[9px] text-slate-500 font-medium">Publish</span>
+                                                                </label>
                                                             </div>
-                                                            <label className="flex items-center gap-1 cursor-pointer select-none">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={isPublishing}
-                                                                    onChange={(e) => setIsPublishing(e.target.checked)}
-                                                                    className="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-3 h-3"
-                                                                />
-                                                                <span className="text-[9px] text-slate-500 font-medium">Publish</span>
-                                                            </label>
                                                         </div>
-                                                    </div>
-                                                )}
-                                            </div>
+                                                    )}
+                                                </div>
 
-                                            <textarea
-                                                className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm min-h-[140px] shadow-sm resize-y bg-white text-slate-900 select-text cursor-text font-mono"
-                                                placeholder="Describe exactly what you want..."
-                                                value={customPrompt}
-                                                onChange={(e) => setCustomPrompt(e.target.value)}
-                                                disabled={processingState.isProcessing}
-                                                style={{ userSelect: 'text', WebkitUserSelect: 'text' }}
-                                            />
-                                        </div>
+                                                <textarea
+                                                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm min-h-[140px] shadow-sm resize-y bg-white text-slate-900 select-text cursor-text font-mono"
+                                                    placeholder="Describe exactly what you want..."
+                                                    value={customPrompt}
+                                                    onChange={(e) => setCustomPrompt(e.target.value)}
+                                                    disabled={processingState.isProcessing}
+                                                    style={{ userSelect: 'text', WebkitUserSelect: 'text' }}
+                                                />
+                                            </div>
+                                        )}
 
                                         {(savedPrompts.length > 0 || activePromptTab === 'shared') && (
                                             <div className="mt-4">
