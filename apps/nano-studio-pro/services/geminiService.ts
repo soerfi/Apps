@@ -75,6 +75,22 @@ const base64ToGenerativePart = (base64DataUrl: string) => {
   };
 };
 
+const urlToBase64 = async (url: string): Promise<string> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    console.error("Failed to convert image URL to base64", e);
+    throw new Error("Failed to load reference image.");
+  }
+};
+
 const analyzeProductFeatures = async (
   file: File,
   apiKey: string,
@@ -254,8 +270,18 @@ export const processImagesWithGemini = async (
   // 1. Inject Style Reference First (if exists and allowed) with STRONG separation
   if (useReferenceImage && referenceImageBase64) {
     if (onStatusUpdate) onStatusUpdate("Processing style reference...");
+
+    let refImagePart;
+    // Check if it's a URL (starts with / or http) vs Data URI (starts with data:)
+    if (referenceImageBase64.startsWith('/') || referenceImageBase64.startsWith('http')) {
+      const b64 = await urlToBase64(referenceImageBase64);
+      refImagePart = base64ToGenerativePart(b64);
+    } else {
+      refImagePart = base64ToGenerativePart(referenceImageBase64);
+    }
+
     contextParts.push({ text: "========================================\nPART 1: STYLE REFERENCE\nUse the following image ONLY for background style, lighting, and color grading. DO NOT generate the object found in this image.\n========================================" });
-    contextParts.push(base64ToGenerativePart(referenceImageBase64));
+    contextParts.push(refImagePart);
   }
 
   // 2. Add Product Input Images
