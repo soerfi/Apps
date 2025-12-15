@@ -24,11 +24,6 @@ FROM python:3.11-slim
 # Install Nginx and ffmpeg
 RUN apt-get update && apt-get install -y nginx ffmpeg && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies for main backend
-WORKDIR /app/backend
-COPY apps/video-downloader/backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
 # Install Python dependencies for video-downloader
 WORKDIR /app/video-downloader
 COPY apps/video-downloader/requirements.txt .
@@ -37,9 +32,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Create necessary directories
 RUN mkdir -p /app/data && chmod 777 /app/data
 RUN mkdir -p /app/video-downloader/downloads && chmod 777 /app/video-downloader/downloads
-
-# Copy Main Backend Code
-COPY apps/video-downloader/backend/ .
 
 # Copy Video Downloader Code
 WORKDIR /app/video-downloader
