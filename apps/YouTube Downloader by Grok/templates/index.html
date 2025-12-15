@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Downloader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            background-color: #0f172a;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+            /* Ensure padding doesn't affect width */
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary);
+        }
+
+        .time-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .messages {
+            margin-bottom: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        #loader {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>YT Downloader</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="messages">
+            {% for category, message in messages %}
+            <div class="alert {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/fetch" method="post" id="downloadForm">
+            <div class="form-group">
+                <label for="url">Video URL</label>
+                <input type="url" id="url" name="url" placeholder="https://youtube.com/watch?v=..." required>
+            </div>
+
+            <button type="submit" id="submitBtn">Fetch Video</button>
+            <div id="loader">Fetching video information...</div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('downloadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+
+        form.addEventListener('submit', function () {
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Fetching...';
+            loader.style.display = 'block';
+
+            // Re-enable in case it's super fast or fails without reload (unlikely)
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Fetch Video';
+                loader.style.display = 'none';
+            }, 30000);
+        });
+    </script>
+</body>
+
+</html>
