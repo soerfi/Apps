@@ -26,27 +26,41 @@ if (fs.existsSync(appsDir)) {
         const appPath = path.join(appsDir, app);
 
         try {
-            // Install dependencies if needed (skipping for speed if already installed, but good to ensure)
-            if (!fs.existsSync(path.join(appPath, 'node_modules'))) {
-                console.log(`Installing dependencies for ${app}...`);
-                execSync('npm install', { cwd: appPath, stdio: 'inherit' });
-            }
+            // Check if it's a Node app (has package.json)
+            if (fs.existsSync(path.join(appPath, 'package.json'))) {
+                // Install dependencies if needed (skipping for speed if already installed, but good to ensure)
+                if (!fs.existsSync(path.join(appPath, 'node_modules'))) {
+                    console.log(`Installing dependencies for ${app}...`);
+                    execSync('npm install', { cwd: appPath, stdio: 'inherit' });
+                }
 
-            // Build
-            execSync('npm run build', { cwd: appPath, stdio: 'inherit' });
+                // Build
+                execSync('npm run build', { cwd: appPath, stdio: 'inherit' });
 
-            // Copy to dist
-            const appDist = path.join(appPath, 'dist');
-            const targetDir = path.join(distDir, app);
+                // Copy to dist
+                const appDist = path.join(appPath, 'dist');
+                const targetDir = path.join(distDir, app);
 
-            if (fs.existsSync(appDist)) {
-                fs.cpSync(appDist, targetDir, { recursive: true });
+                if (fs.existsSync(appDist)) {
+                    fs.cpSync(appDist, targetDir, { recursive: true });
+                    apps.push({
+                        name: app,
+                        path: `/${app}/`
+                    });
+                } else {
+                    console.error(`Build failed for ${app}: dist folder not found.`);
+                }
+            } else if (app === 'video-downloader') {
+                // Special handling for Video Downloader (Python/Docker)
+                // It's not a static site, so we just add it to the menu.
+                // The Nginx proxy will handle routing.
+                console.log(`Skipping build for ${app} (Python App), adding to menu...`);
                 apps.push({
-                    name: app,
-                    path: `/${app}/`
+                    name: 'Video Downloader',
+                    path: '/video-downloader/'
                 });
             } else {
-                console.error(`Build failed for ${app}: dist folder not found.`);
+                console.log(`Skipping ${app}: No package.json found.`);
             }
         } catch (error) {
             console.error(`Error building ${app}:`, error);

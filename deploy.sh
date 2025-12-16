@@ -9,23 +9,9 @@ echo "🚀 Starting deployment..."
 echo "📥 Pulling latest code..."
 git pull
 
-# 2. Build Docker Image
-echo "🏗️ Building Docker image..."
-docker build -t my-app-menu .
+# 2. Build and Run with Docker Compose
+echo "🚀 Starting Docker Compose..."
+docker-compose down
+docker-compose up -d --build --remove-orphans
 
-# 3. Stop and remove existing container (if running)
-echo "🛑 Stopping existing container..."
-docker stop my-app-menu || true
-docker rm my-app-menu || true
-
-# 4. Run new container
-# Note: We use --restart unless-stopped so it auto-starts on reboot
-echo "▶️ Starting new container..."
-docker run -d \
-  --name my-app-menu \
-  --restart unless-stopped \
-  -v $(pwd)/data:/app/data \
-  -p 80:80 \
-  my-app-menu
-
-echo "✅ Deployment complete! App is running on port 80."
+echo "✅ Deployment complete! Services are running."

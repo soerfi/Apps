@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  menu:
+    image: my-app-menu
+    build: .
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - video-downloader
+
+  video-downloader:
+    build: ./apps/video-downloader
+    restart: unless-stopped
+    volumes:
+      - ./apps/video-downloader/downloads:/app/downloads

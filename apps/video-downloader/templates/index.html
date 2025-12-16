@@ -160,7 +160,7 @@
         {% endif %}
         {% endwith %}
 
-        <form action="/fetch" method="post" id="downloadForm">
+        <form action="{{ url_for('fetch_video') }}" method="post" id="downloadForm">
             <div class="form-group">
                 <label for="url">Video URL</label>
                 <input type="url" id="url" name="url" placeholder="https://youtube.com/watch?v=..." required>
