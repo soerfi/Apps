@@ -84,7 +84,13 @@ def fetch_video():
             'merge_output_format': 'mp4',
             'outtmpl': os.path.join(current_download_dir, 'original.%(ext)s'),
             'noplaylist': True,
+            'noplaylist': True,
             'quiet': True,
+            'sleep_interval': 3,
+            'max_sleep_interval': 8,
+            'extractor_args': {'youtube': 'player_client=web;po_token=web'},
+            'force_generic_extractor': False,
+            'no_check_certificate': True,
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
