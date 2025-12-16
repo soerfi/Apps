@@ -19,9 +19,14 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 app.secret_key = 'supersecretkey'
 
 DOWNLOAD_FOLDER = os.path.abspath('downloads')
+CONFIG_FOLDER = os.path.abspath('config')
 
 def clean_downloads():
     """Cleans the downloads directory on startup."""
+    # Ensure folders exist
+    os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+    os.makedirs(CONFIG_FOLDER, exist_ok=True)
+
     if os.path.exists(DOWNLOAD_FOLDER):
         logger.info(f"Cleaning downloads folder: {DOWNLOAD_FOLDER}")
         for filename in os.listdir(DOWNLOAD_FOLDER):
@@ -33,11 +38,24 @@ def clean_downloads():
                     shutil.rmtree(file_path)
             except Exception as e:
                 logger.error(f'Failed to delete {file_path}. Reason: {e}')
-    else:
-        os.makedirs(DOWNLOAD_FOLDER)
 
 # Clean downloads on startup
 clean_downloads()
+
+@app.route('/cookies', methods=['POST'])
+def upload_cookies():
+    if 'file' not in request.files:
+        flash('No file part', 'error')
+        return redirect(url_for('index'))
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file', 'error')
+        return redirect(url_for('index'))
+    if file:
+        filepath = os.path.join(CONFIG_FOLDER, 'cookies.txt')
+        file.save(filepath)
+        flash('Cookies uploaded successfully!', 'success')
+        return redirect(url_for('index'))
 
 @app.route('/downloads/<path:filename>')
 def custom_static(filename):
@@ -45,7 +63,8 @@ def custom_static(filename):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    cookies_present = os.path.exists(os.path.join(CONFIG_FOLDER, 'cookies.txt'))
+    return render_template('index.html', cookies_present=cookies_present)
 
 @app.route('/fetch', methods=['POST'])
 def fetch_video():
@@ -67,6 +86,11 @@ def fetch_video():
             'noplaylist': True,
             'quiet': True,
         }
+        
+        cookie_file = os.path.join(CONFIG_FOLDER, 'cookies.txt')
+        if os.path.exists(cookie_file):
+            ydl_opts['cookiefile'] = cookie_file
+            logger.info("Using cookies.txt for authentication")
 
         logger.info(f"Fetching video for URL: {url}")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:

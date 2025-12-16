@@ -28,30 +28,30 @@ const App: React.FC = () => {
   return (
     <div className="h-screen bg-gray-900 text-white flex flex-col font-sans">
       {isLoading && <Loader message={loadingMessage} />}
-      
+
       <header className="w-full text-center p-4 bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 flex-shrink-0 z-10">
-        <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Image Resizer & Cropper</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Banner Wizzard</h1>
       </header>
-      
+
       <main className="flex-1 w-full flex items-start justify-center overflow-y-auto">
-          {errorMessage && (
-              <div className="fixed top-20 bg-red-500/90 text-white py-2 px-4 rounded-md shadow-lg z-50 animate-pulse">
-                  {errorMessage}
-                  <button onClick={() => setErrorMessage(null)} className="ml-4 font-bold">X</button>
-              </div>
-          )}
-          {imageFile ? (
-              <ImageEditor 
-                  file={imageFile}
-                  onIsLoadingChange={handleIsLoadingChange}
-                  setErrorMessage={setErrorMessage}
-                  onReset={handleReset}
-              />
-          ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <Dropzone onFileDrop={handleFileDrop} setErrorMessage={setErrorMessage}/>
-              </div>
-          )}
+        {errorMessage && (
+          <div className="fixed top-20 bg-red-500/90 text-white py-2 px-4 rounded-md shadow-lg z-50 animate-pulse">
+            {errorMessage}
+            <button onClick={() => setErrorMessage(null)} className="ml-4 font-bold">X</button>
+          </div>
+        )}
+        {imageFile ? (
+          <ImageEditor
+            file={imageFile}
+            onIsLoadingChange={handleIsLoadingChange}
+            setErrorMessage={setErrorMessage}
+            onReset={handleReset}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Dropzone onFileDrop={handleFileDrop} setErrorMessage={setErrorMessage} />
+          </div>
+        )}
       </main>
     </div>
   );

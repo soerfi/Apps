@@ -160,6 +160,32 @@
         {% endif %}
         {% endwith %}
 
+        <div style="margin-bottom: 2rem;">
+            <details
+                style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border-color);">
+                <summary style="cursor: pointer; color: var(--primary); font-weight: 500;">
+                    Manage YouTube Cookies
+                    <span
+                        style="float: right; font-size: 0.8em; color: {{ 'var(--primary)' if cookies_present else '#64748b' }}">
+                        {{ '✅ Active' if cookies_present else '❌ Not found' }}
+                    </span>
+                </summary>
+                <div style="margin-top: 1rem;">
+                    <p style="font-size: 0.9em; color: var(--text-secondary); margin-bottom: 1rem;">
+                        If downloads fail due to bot detection, upload a <code>cookies.txt</code> file here.
+                        Use an extension like "Get cookies.txt LOCALLY" to export it from your browser.
+                    </p>
+                    <form action="{{ url_for('upload_cookies') }}" method="post" enctype="multipart/form-data"
+                        style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="file" name="file" accept=".txt"
+                            style="background: transparent; border: none; padding: 0; color: white; width: auto;">
+                        <button type="submit"
+                            style="width: auto; padding: 0.5rem 1rem; font-size: 0.9em;">Upload</button>
+                    </form>
+                </div>
+            </details>
+        </div>
+
         <form action="{{ url_for('fetch_video') }}" method="post" id="downloadForm">
             <div class="form-group">
                 <label for="url">Video URL</label>

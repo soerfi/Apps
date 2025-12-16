@@ -17,3 +17,4 @@ services:
     restart: unless-stopped
     volumes:
       - ./apps/video-downloader/downloads:/app/downloads
+      - ./apps/video-downloader/config:/app/config
