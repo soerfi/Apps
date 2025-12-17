@@ -50,15 +50,6 @@ if (fs.existsSync(appsDir)) {
                 } else {
                     console.error(`Build failed for ${app}: dist folder not found.`);
                 }
-            } else if (app === 'video-downloader') {
-                // Special handling for Video Downloader (Python/Docker)
-                // It's not a static site, so we just add it to the menu.
-                // The Nginx proxy will handle routing.
-                console.log(`Skipping build for ${app} (Python App), adding to menu...`);
-                apps.push({
-                    name: 'Video Downloader',
-                    path: '/video-downloader/'
-                });
             } else {
                 console.log(`Skipping ${app}: No package.json found.`);
             }
