@@ -1,0 +1,14 @@
+[
+  {
+    "id": "shared-1",
+    "name": "Badge",
+    "url": "https://placehold.co/100x100/png?text=Badge",
+    "category": "Shared"
+  },
+  {
+    "id": "shared-2",
+    "name": "Star",
+    "url": "https://placehold.co/100x100/png?text=Star",
+    "category": "Shared"
+  }
+]
