@@ -89,29 +89,10 @@ Final image aspect ratio must be exactly 3:4.`,
     label: 'Remove BG & Repair',
     description: 'Isolate product & reconstruction.',
     icon: 'Eraser',
-    promptTemplate: `Create a high end, production grade background removal and product repair result for ecommerce use.
-
-Completely remove the background and isolate the product cleanly. No cutout artifacts, no halos, no fringing, no transparency errors.
-
-The final background must be 100 percent pure white. Absolute white only. No off white tones, no gradients, no texture, no shadows, no reflections, no background artifacts of any kind.
-
-If any part of the product is occluded by hands, models or objects, fully reconstruct the hidden areas so the product appears complete, intact and brand new. Reconstructed parts must be geometrically, materially and visually consistent with the original product. No guessed details, no design changes, no simplification.
-
-Product accuracy has absolute priority. Colors, materials, textures, proportions, logos, prints, stitching, graphics and construction details must remain 1 to 1 accurate. In no case may branding elements be altered, resized, redrawn or reinterpreted.
-
-Preserve original fabric texture, surface finish, thickness and material behavior. No over smoothing. No artificial sharpening. No plastic look.
-
-Edges must be precise and natural. Maintain correct contours, cut lines and silhouette. No warping, stretching or deformation.
-
-Repair must respect real world construction. Seams, panels, hems, edges and joins must align perfectly and follow realistic garment or product logic.
-
-Lighting must remain neutral, clean and consistent across the entire product. No dramatic lighting. No baked in shadows. No added highlights.
-
-Crop clean and balanced. Center the product. No unnecessary whitespace. Do not cut off any part of the product.
-
-Explicit exclusions: no text overlays, no watermarks, no UI elements, no props, no artificial effects, no stylization.
-
-The final result must look like a flawless, untouched product shot ready for a professional webshop.`,
+    promptTemplate: `Professional ecommerce product photography, isolated on a pure hex #FFFFFF white background. 
+    High-end studio lighting, 1:1 material accuracy, flawless product reconstruction. Remove all models and hands; 
+    reconstruct hidden areas with perfect geometric symmetry. 
+    Sharp edges, realistic fabric textures, zero artifacts. 8k resolution, production-grade clean plate.`,
   },
   {
     id: PresetType.LIFESTYLE,
