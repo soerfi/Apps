@@ -55,7 +55,7 @@ export const analyzeWithOpenAI = async (file: File, apiKey: string): Promise<str
     });
 
     const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-image-1.5",
         messages: [
             {
                 role: "user",
