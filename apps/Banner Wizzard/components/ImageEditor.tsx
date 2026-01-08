@@ -42,13 +42,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ file, pastedFiles, onProcesse
   const activeLayer = layers.find(l => l.id === activeLayerId);
   const hasTransparency = layers.some(l => l.visible && ((l.image && l.hasTransparency) || l.opacity < 1));
 
-  useEffect(() => {
-    if (hasTransparency && exportOptions.format !== 'image/png' && exportOptions.format !== 'image/webp') {
-      setExportOptions(prev => ({ ...prev, format: 'image/png' }));
-    } else if (!hasTransparency && exportOptions.format === 'image/jpeg') {
-      setExportOptions(prev => ({ ...prev, format: 'image/jpeg' }));
-    }
-  }, [hasTransparency, exportOptions.format, layers]);
 
   const dataURLtoBlob = (dataurl: string): Blob | null => {
     const arr = dataurl.split(',');
@@ -405,7 +398,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({ file, pastedFiles, onProcesse
             <select id="format-select" value={exportOptions.format} onChange={(e) => setExportOptions(prev => ({ ...prev, format: e.target.value as ExportFormat }))} className="bg-gray-600 border border-gray-500 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
               <option value="image/png">PNG</option>
               <option value="image/webp">WebP</option>
-              <option value="image/jpeg">JPG {hasTransparency && "(solid background)"}</option>
+              <option value="image/jpeg">JPG</option>
             </select>
             {(exportOptions.format === 'image/jpeg' || exportOptions.format === 'image/webp') && (
               <>

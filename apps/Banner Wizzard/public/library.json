@@ -10,5 +10,11 @@
     "name": "Star",
     "url": "https://placehold.co/100x100/png?text=Star",
     "category": "Shared"
+  },
+  {
+    "id": "shared-1767816934810",
+    "name": "test-image",
+    "url": "/library/1767816934805-test_image.png",
+    "category": "Shared"
   }
 ]

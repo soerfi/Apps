@@ -22,20 +22,14 @@ export const AssetLibrary: React.FC<AssetLibraryProps> = ({ isOpen, onClose, onS
                 const res = await fetch('/library.json');
                 const staticAssets: Asset[] = await res.json();
 
-                // Get dynamic shared assets
-                const storedShared = localStorage.getItem('banner-wizzard-shared-assets');
-                const dynamicShared = storedShared ? JSON.parse(storedShared) : [];
-
                 // Get hidden static asset IDs
                 const hiddenStored = localStorage.getItem('banner-wizzard-hidden-shared');
                 const hiddenIds = hiddenStored ? JSON.parse(hiddenStored) : [];
 
-                const filteredStatic = staticAssets.filter(a => !hiddenIds.includes(a.id));
-                setSharedAssets([...filteredStatic, ...dynamicShared]);
+                const filtered = staticAssets.filter(a => !hiddenIds.includes(a.id));
+                setSharedAssets(filtered);
             } catch (err) {
                 console.error("Failed to load shared library:", err);
-                const storedShared = localStorage.getItem('banner-wizzard-shared-assets');
-                if (storedShared) setSharedAssets(JSON.parse(storedShared));
             }
         };
         loadShared();
@@ -54,32 +48,41 @@ export const AssetLibrary: React.FC<AssetLibraryProps> = ({ isOpen, onClose, onS
 
             return new Promise<void>((resolve) => {
                 const reader = new FileReader();
-                reader.onload = (event) => {
-                    const newAsset: Asset = {
-                        id: `${activeTab}-${Date.now()}-${Math.random()}`,
-                        name: file.name.replace(/\.[^/.]+$/, ""),
-                        url: event.target?.result as string,
-                        category: activeTab === 'shared' ? 'Shared' : 'User'
-                    };
+                reader.onload = async (event) => {
+                    const dataUrl = event.target?.result as string;
 
                     if (activeTab === 'shared') {
-                        const storedShared = localStorage.getItem('banner-wizzard-shared-assets');
-                        const dynamicShared = storedShared ? JSON.parse(storedShared) : [];
-                        const updated = [newAsset, ...dynamicShared];
-                        localStorage.setItem('banner-wizzard-shared-assets', JSON.stringify(updated));
+                        try {
+                            const res = await fetch('/api/save-asset', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    name: file.name.replace(/\.[^/.]+$/, ""),
+                                    url: dataUrl,
+                                    category: 'Shared'
+                                })
+                            });
 
-                        const hiddenStored = localStorage.getItem('banner-wizzard-hidden-shared');
-                        const hiddenIds = hiddenStored ? JSON.parse(hiddenStored) : [];
-
-                        fetch('/library.json')
-                            .then(res => res.json())
-                            .then((staticAssets: Asset[]) => {
-                                const filteredStatic = staticAssets.filter(a => !hiddenIds.includes(a.id));
-                                setSharedAssets([...filteredStatic, ...updated]);
-                            })
-                            .catch(() => setSharedAssets(updated))
-                            .finally(() => resolve());
+                            if (res.ok) {
+                                // Reload library after save
+                                const refreshRes = await fetch('/library.json');
+                                const allAssets = await refreshRes.json();
+                                const hiddenStored = localStorage.getItem('banner-wizzard-hidden-shared');
+                                const hiddenIds = hiddenStored ? JSON.parse(hiddenStored) : [];
+                                setSharedAssets(allAssets.filter((a: Asset) => !hiddenIds.includes(a.id)));
+                            }
+                        } catch (err) {
+                            console.error("Failed to save shared asset:", err);
+                        } finally {
+                            resolve();
+                        }
                     } else {
+                        const newAsset: Asset = {
+                            id: `user-${Date.now()}-${Math.random()}`,
+                            name: file.name.replace(/\.[^/.]+$/, ""),
+                            url: dataUrl,
+                            category: 'User'
+                        };
                         const updated = [newAsset, ...userAssets];
                         setUserAssets(updated);
                         localStorage.setItem('banner-wizzard-assets', JSON.stringify(updated));
@@ -104,38 +107,21 @@ export const AssetLibrary: React.FC<AssetLibraryProps> = ({ isOpen, onClose, onS
             setUserAssets(updated);
             localStorage.setItem('banner-wizzard-assets', JSON.stringify(updated));
         } else {
-            // 1. Check if it's a dynamic shared asset
-            const storedShared = localStorage.getItem('banner-wizzard-shared-assets');
-            const dynamicShared = storedShared ? JSON.parse(storedShared) : [];
-            const isDynamic = dynamicShared.some((a: Asset) => a.id === id);
-
-            if (isDynamic) {
-                const updatedDynamic = dynamicShared.filter((a: Asset) => a.id !== id);
-                localStorage.setItem('banner-wizzard-shared-assets', JSON.stringify(updatedDynamic));
-            } else {
-                // 2. If not dynamic, it's static. Add to hidden list.
-                const hiddenStored = localStorage.getItem('banner-wizzard-hidden-shared');
-                const hiddenIds = hiddenStored ? JSON.parse(hiddenStored) : [];
-                if (!hiddenIds.includes(id)) {
-                    hiddenIds.push(id);
-                    localStorage.setItem('banner-wizzard-hidden-shared', JSON.stringify(hiddenIds));
-                }
+            // Add to hidden list.
+            const hiddenStored = localStorage.getItem('banner-wizzard-hidden-shared');
+            const hiddenIds = hiddenStored ? JSON.parse(hiddenStored) : [];
+            if (!hiddenIds.includes(id)) {
+                hiddenIds.push(id);
+                localStorage.setItem('banner-wizzard-hidden-shared', JSON.stringify(hiddenIds));
             }
 
             // Refresh UI
-            const hiddenStored = localStorage.getItem('banner-wizzard-hidden-shared');
-            const hiddenIds = hiddenStored ? JSON.parse(hiddenStored) : [];
-            const updatedDynamic = localStorage.getItem('banner-wizzard-shared-assets')
-                ? JSON.parse(localStorage.getItem('banner-wizzard-shared-assets')!)
-                : [];
-
             fetch('/library.json')
                 .then(res => res.json())
                 .then((staticAssets: Asset[]) => {
-                    const filteredStatic = staticAssets.filter(a => !hiddenIds.includes(a.id));
-                    setSharedAssets([...filteredStatic, ...updatedDynamic]);
+                    setSharedAssets(staticAssets.filter(a => !hiddenIds.includes(a.id)));
                 })
-                .catch(() => setSharedAssets(updatedDynamic));
+                .catch(err => console.error("Failed to refresh library after hide:", err));
         }
     };
 
