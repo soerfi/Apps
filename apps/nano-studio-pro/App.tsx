@@ -6,6 +6,7 @@ import { ImageCropper } from './components/ImageCropper';
 import { PRESETS, DEFAULT_LIFESTYLE_PROMPT } from './constants';
 import { Preset, ProcessingState, SourceImage, IMAGE_LABELS, PresetType, ProcessedImage, AVAILABLE_ANGLES, SavedStyle } from './types';
 import { processImagesWithGemini, upscaleImage } from './services/geminiService';
+import { processImagesWithOpenAI } from './services/openaiService';
 import { fetchSharedStyles, publishSharedStyle, deleteSharedStyle, type SharedStyle } from './services/styleService';
 import { fetchSharedPrompts, publishSharedPrompt, deleteSharedPrompt, type SharedPrompt } from './services/promptService';
 import { Download, X, AlertCircle, Wand2, Plus, ZoomIn, Maximize2, ChevronLeft, ChevronRight, Crop, Save, Trash2, LayoutTemplate, RotateCw, Settings2, Check, ArrowUpCircle, Info, Loader2, Key, ImagePlus, Ratio, Sun, Home, AlignLeft, FileType, Library, ArrowDownAZ, Calendar, Grid } from 'lucide-react';
@@ -69,6 +70,8 @@ const App: React.FC = () => {
 
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const [apiKey, setApiKey] = useState<string>('');
+    const [openaiKey, setOpenaiKey] = useState<string>('');
+    const [aiModel, setAiModel] = useState<'gemini' | 'openai'>('gemini');
     const [showKeyInput, setShowKeyInput] = useState(false);
 
     const [imageToCrop, setImageToCrop] = useState<{ type: 'source' | 'result'; url: string; index: number } | null>(null);
@@ -76,12 +79,28 @@ const App: React.FC = () => {
     useEffect(() => {
         const storedKey = localStorage.getItem('nanoStudio_apiKey');
         if (storedKey) setApiKey(storedKey);
+
+        const storedOpenAI = localStorage.getItem('nanoStudio_openaiKey');
+        if (storedOpenAI) setOpenaiKey(storedOpenAI);
+
+        const storedModel = localStorage.getItem('nanoStudio_aiModel');
+        if (storedModel === 'openai') setAiModel('openai');
     }, []);
 
     const saveApiKey = (key: string) => {
         setApiKey(key);
         localStorage.setItem('nanoStudio_apiKey', key);
         setShowKeyInput(false);
+    };
+
+    const saveOpenaiKey = (key: string) => {
+        setOpenaiKey(key);
+        localStorage.setItem('nanoStudio_openaiKey', key);
+    };
+
+    const handleModelChange = (model: 'gemini' | 'openai') => {
+        setAiModel(model);
+        localStorage.setItem('nanoStudio_aiModel', model);
     };
 
     useEffect(() => {
@@ -510,20 +529,39 @@ const App: React.FC = () => {
             // For Lifestyle, use the System Template as the prompt, and pass lifestyleContext as additional details
             const promptToSend = selectedPreset.id === PresetType.LIFESTYLE ? (selectedPreset.promptTemplate || "") : customPrompt;
 
-            const results = await processImagesWithGemini(
-                sourceImages,
-                selectedPreset.id,
-                promptToSend,
-                apiKey,
-                imageQuality,
-                updateStatus,
-                referenceImage,
-                selectedAngles,
-                bodyType,
-                targetAspectRatio,
-                lifestyleEnv,
-                lifestyleContext
-            );
+            let results: ProcessedImage[] = [];
+
+            if (aiModel === 'openai') {
+                if (!openaiKey) {
+                    alert("Please enter an OpenAI API Key in settings.");
+                    setProcessingState(prev => ({ ...prev, isProcessing: false }));
+                    return;
+                }
+
+                // For OpenAI, we use the custom prompt as is. DALL-E 3 doesn't have the same "system prompt" nuance.
+                results = await processImagesWithOpenAI(
+                    sourceImages,
+                    promptToSend + (lifestyleContext ? `\n\nContext: ${lifestyleContext}` : ""),
+                    openaiKey,
+                    updateStatus,
+                    targetAspectRatio === '1:1' ? '1024x1024' : (isPortrait ? '1024x1792' : '1792x1024')
+                );
+            } else {
+                results = await processImagesWithGemini(
+                    sourceImages,
+                    selectedPreset.id,
+                    promptToSend,
+                    apiKey,
+                    imageQuality,
+                    updateStatus,
+                    referenceImage,
+                    selectedAngles,
+                    bodyType,
+                    targetAspectRatio,
+                    lifestyleEnv,
+                    lifestyleContext
+                );
+            }
 
             setProcessingState({
                 isProcessing: false,
@@ -721,25 +759,57 @@ const App: React.FC = () => {
                     <h1 className="text-2xl font-bold text-slate-900 mb-2">Nano Studio Pro</h1>
                     <p className="text-slate-500 mb-6">Enter your Gemini API Key to continue.</p>
 
+                    <div className="flex bg-slate-100 p-1 rounded-xl mb-6">
+                        <button
+                            onClick={() => setAiModel('gemini')}
+                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${aiModel === 'gemini' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500'}`}
+                        >
+                            Google Gemini
+                        </button>
+                        <button
+                            onClick={() => setAiModel('openai')}
+                            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${aiModel === 'openai' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-500'}`}
+                        >
+                            ChatGPT 5.2
+                        </button>
+                    </div>
+
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         const form = e.target as HTMLFormElement;
-                        const input = form.elements.namedItem('key') as HTMLInputElement;
-                        if (input.value.trim()) saveApiKey(input.value.trim());
+                        const geminiInput = form.elements.namedItem('geminiKey') as HTMLInputElement;
+                        const openaiInput = form.elements.namedItem('openaiKey') as HTMLInputElement;
+                        if (geminiInput.value.trim()) saveApiKey(geminiInput.value.trim());
+                        if (openaiInput.value.trim()) saveOpenaiKey(openaiInput.value.trim());
                     }}>
-                        <input
-                            name="key"
-                            type="password"
-                            placeholder="Enter Google Gemini API Key"
-                            className="w-full mb-4 px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                            autoFocus
-                        />
+                        <div className="space-y-4 mb-6 text-left">
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-1">Gemini API Key</label>
+                                <input
+                                    name="geminiKey"
+                                    type="password"
+                                    defaultValue={apiKey}
+                                    placeholder="Enter Google Gemini API Key"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-1">OpenAI API Key (Optional)</label>
+                                <input
+                                    name="openaiKey"
+                                    type="password"
+                                    defaultValue={openaiKey}
+                                    placeholder="Enter OpenAI API Key"
+                                    className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-sm"
+                                />
+                            </div>
+                        </div>
                         <Button className="w-full h-12 text-lg">
                             Start Creating
                         </Button>
                     </form>
                     <p className="mt-4 text-xs text-slate-400">
-                        Key is saved locally in your browser.
+                        Keys are saved locally in your browser.
                     </p>
                 </div>
             </div>
@@ -793,17 +863,23 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setApiKey('')}
-                            className="flex items-center gap-2 px-3 py-1 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
-                            title="Change API Key"
-                        >
-                            <Key size={14} />
-                            <span className="hidden sm:inline">Change Key</span>
-                        </button>
+                        <div className="flex bg-slate-100 p-1 rounded-lg">
+                            <button
+                                onClick={() => handleModelChange('gemini')}
+                                className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${aiModel === 'gemini' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                Gemini
+                            </button>
+                            <button
+                                onClick={() => handleModelChange('openai')}
+                                className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${aiModel === 'openai' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                ChatGPT 5.2
+                            </button>
+                        </div>
 
                         <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
-                            <span className="px-2 text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
+                            <span className="px-2 text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
                                 <FileType size={12} /> Format
                             </span>
                             <div className="h-4 w-px bg-slate-300 mx-1"></div>
@@ -811,7 +887,7 @@ const App: React.FC = () => {
                                 <button
                                     key={fmt}
                                     onClick={() => handleFormatChange(fmt as ExportFormat)}
-                                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all uppercase ${exportFormat === fmt ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
+                                    className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all uppercase ${exportFormat === fmt ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
                                 >
                                     {fmt}
                                 </button>
@@ -819,33 +895,33 @@ const App: React.FC = () => {
                         </div>
 
                         <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
-                            <span className="px-2 text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
+                            <span className="px-2 text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
                                 <Settings2 size={12} /> Quality
                             </span>
                             <div className="h-4 w-px bg-slate-300 mx-1"></div>
-                            <button
-                                onClick={() => setImageQuality('1K')}
-                                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${imageQuality === '1K' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
-                            >
-                                Fast (1K)
-                            </button>
-                            <button
-                                onClick={() => setImageQuality('2K')}
-                                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${imageQuality === '2K' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-900'}`}
-                            >
-                                High (2K)
-                            </button>
-                            <button
-                                onClick={() => setImageQuality('4K')}
-                                className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${imageQuality === '4K' ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
-                            >
-                                Ultra (4K)
-                            </button>
+                            {['1K', '2K', '4K'].map(q => (
+                                <button
+                                    key={q}
+                                    onClick={() => setImageQuality(q as any)}
+                                    className={`px-2 py-1 text-[10px] font-bold rounded-md transition-all ${imageQuality === q ? (q === '4K' ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-sm' : 'bg-white shadow-sm text-slate-900') : 'text-slate-500 hover:text-slate-900'}`}
+                                >
+                                    {q === '1K' ? 'Fast' : q === '2K' ? 'High' : 'Ultra'}
+                                </button>
+                            ))}
                         </div>
 
+                        <button
+                            onClick={() => setApiKey('')}
+                            className="flex items-center gap-2 px-3 py-1 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-900 transition-colors shadow-sm"
+                            title="Manage API Keys"
+                        >
+                            <Settings2 size={14} />
+                            Keys
+                        </button>
+
                         {sourceImages.length > 0 && (
-                            <Button variant="ghost" onClick={handleClear} size="sm" className="text-slate-500 hover:text-red-600">
-                                Start Over
+                            <Button variant="ghost" onClick={handleClear} size="sm" className="text-slate-500 hover:text-red-600 h-8 text-[10px] uppercase font-bold">
+                                Clear
                             </Button>
                         )}
                     </div>
@@ -1316,6 +1392,23 @@ const App: React.FC = () => {
                                                     disabled={processingState.isProcessing}
                                                     style={{ userSelect: 'text', WebkitUserSelect: 'text' }}
                                                 />
+                                            </div>
+                                        )}
+
+                                        {selectedPreset.id === PresetType.BG_REMOVE_REPAIR && (
+                                            <div className="mt-4">
+                                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                                    <AlignLeft size={12} /> Specific Instructions
+                                                </h3>
+                                                <textarea
+                                                    className="w-full p-2 text-xs border border-slate-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none h-20 bg-white text-slate-700"
+                                                    placeholder="e.g. Keep the shadows, or change the background to light grey..."
+                                                    value={lifestyleContext}
+                                                    onChange={(e) => setLifestyleContext(e.target.value)}
+                                                />
+                                                <p className="text-[10px] text-slate-400 mt-1 italic">
+                                                    These instructions will be added to the system prompt to guide the background removal and reconstruction.
+                                                </p>
                                             </div>
                                         )}
 

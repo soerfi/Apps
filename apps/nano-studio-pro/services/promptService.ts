@@ -5,7 +5,7 @@ export interface SharedPrompt {
     timestamp: number;
 }
 
-const API_BASE = '/api/prompts/';
+const API_BASE = '/nano-studio-pro/api/prompts/';
 
 export const fetchSharedPrompts = async (): Promise<SharedPrompt[]> => {
     try {

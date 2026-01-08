@@ -6,7 +6,7 @@ export interface SharedStyle {
     timestamp: number;
 }
 
-const API_BASE = '/api/styles/';
+const API_BASE = '/nano-studio-pro/api/styles/';
 
 export const fetchSharedStyles = async (): Promise<SharedStyle[]> => {
     try {

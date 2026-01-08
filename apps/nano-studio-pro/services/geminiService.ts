@@ -345,6 +345,8 @@ export const processImagesWithGemini = async (
   let finalPromptWithAnalysis = "";
   if (presetId === PresetType.LIFESTYLE) {
     finalPromptWithAnalysis = `COMPOSITE TASK: ${cleanPrompt}\n${strictBodyInstruction}\n\nSTRICT REQUIREMENT: The object in the input image is the SOURCE OF TRUTH. Do not regenerate the geometry, text, or logos. You are a compositor, not a designer. Maintain these exact details:\n${description}`;
+  } else if (presetId === PresetType.BG_REMOVE_REPAIR && additionalContext) {
+    finalPromptWithAnalysis = `${cleanPrompt}\n\nSPECIFIC INSTRUCTIONS: ${additionalContext}\n\nIMPORTANT - PRESERVE THESE DETECTED PRODUCT DETAILS:\n${description}`;
   } else {
     finalPromptWithAnalysis = `${cleanPrompt}\n\nIMPORTANT - PRESERVE THESE DETECTED PRODUCT DETAILS:\n${description}`;
   }
