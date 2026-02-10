@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vorstand | TC Grüze Member Area</title>
     <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/members.css">
     <style>
         .vorstand-grid {
             display: grid;
@@ -62,7 +63,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="../../images/favicon/apple-touch-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="../../images/favicon/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/favicon/apple-touch-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="../../images/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="../../images/favicon/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="../../images/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../../images/favicon/favicon-16x16.png">
@@ -73,139 +74,181 @@
 
 <body class="sub-page" style="background-color: var(--color-bg-subtle);">
     <!-- Navigation -->
-    <nav id="main-nav" class="scrolled">
+    <nav id="main-nav">
         <div class="container">
             <a href="../../index.html" class="logo">
-                <img src="../../images/icons/tc_grueze_logo.svg" alt="TC Grüze Logo" style="height: 50px;">
+                <img src="../../images/icons/tc_grueze_logo-white.svg" alt="TC Grüze Logo" style="height: 50px;">
             </a>
+            <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <div class="nav-inner">
                 <ul class="nav-menu">
                     <li><a href="../../index.html">Home</a></li>
-                    <li><a href="../club/index.html">Club</a></li>
-                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="index.html">Abmelden</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../club/index.html">Club</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../club/index.html">Über uns</a></li>
+                            <li><a href="../club/jahresprogramm.html">Jahresprogramm</a></li>
+                            <li><a href="../club/geschichte.html">Geschichte</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../mitgliedschaft/index.html">Mitgliedschaft</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../sport/index.html">Sport</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../sport/index.html">Tennis</a></li>
+                            <li><a href="../sport/pickleball.html">Pickleball</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../events/index.html">Events</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../service/index.html">Service</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../service/spielzeiten.html">Spielzeiten</a></li>
+                            <li><a href="../service/reglement.html">Reglement</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../kontakt/index.html">Kontakt</a></li>
+                    <li><a href="index.html" class="active">Members</a></li>
                 </ul>
+                <div class="nav-cta mobile-hide">
+                    <a href="https://mein.fairgate.ch/tcgrueze/register/NTI3Mw==" class="btn-join" target="_blank"
+                        rel="noopener noreferrer">Mitglied werden</a>
+                </div>
             </div>
         </div>
     </nav>
 
-    <section style="padding-top: 15rem;">
+    <!-- Hero -->
+    <header class="hero"
+        style="background-image: url('../../images/club/halle-01.webp'); height: 50vh; min-height: 400px;">
+        <div class="container">
+            <div class="hero-content scroll-reveal">
+                <h1>Unser <span class="text-gradient">Vorstand</span></h1>
+                <p>Ihre Ansprechpartner für alle Belange des Vereins.</p>
+            </div>
+        </div>
+    </header>
+
+    <section>
         <div class="container">
             <div class="scroll-reveal">
                 <a href="dashboard.html" style="text-decoration: none; color: var(--color-primary); font-weight: 700;">←
                     Zurück zum Dashboard</a>
-                <h1 class="mt-2">Vorstands<span class="text-gradient">liste</span></h1>
-                <p>Ihre Ansprechpartner für alle Belange des Vereins.</p>
+
+                <div class="vorstand-grid">
+                    <!-- Präsidentin -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Präsidentin</span>
+                        <span class="vorstand-name">Alexandra Pfister</span>
+                        <div class="vorstand-info">
+                            <p>📍 Seenerstrasse 194, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41792338868">079 233 88 68</a></p>
+                            <p>📧 <a href="mailto:a.pfister@tenniscenter-grueze.ch">a.pfister@tenniscenter-grueze.ch</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Vizepräsident -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Vizepräsident</span>
+                        <span class="vorstand-name">Sasa Glisic</span>
+                        <div class="vorstand-info">
+                            <p>📍 Elchweg 29, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41772659036">077 265 90 36</a></p>
+                            <p>📧 <a href="mailto:sasa.glisic@outlook.com">sasa.glisic@outlook.com</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Aktuarin -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Aktuarin</span>
+                        <span class="vorstand-name">Laura Müller</span>
+                        <div class="vorstand-info">
+                            <p>📍 Landvogt-Waser-Strasse 26, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41788587674">078 858 76 74</a></p>
+                            <p>📧 <a href="mailto:laura.mueller2002@me.com">laura.mueller2002@me.com</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Kassierin -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Kassierin + Vertrauensperson VERSA</span>
+                        <span class="vorstand-name">Vanessa Wegmann</span>
+                        <div class="vorstand-info">
+                            <p>📍 Seenerstrasse 196, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41762603323">076 260 33 23</a></p>
+                            <p>📧 <a href="mailto:v.wegmann@tenniscenter-grueze.ch">v.wegmann@tenniscenter-grueze.ch</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Spielleiter -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Spielleiter + J+S Coach</span>
+                        <span class="vorstand-name">Julian Winter</span>
+                        <div class="vorstand-info">
+                            <p>📍 Gebhartstrasse 40, 8404 Winterthur</p>
+                            <p>📞 <a href="tel:+41765472231">076 547 22 31</a></p>
+                            <p>📧 <a href="mailto:julian.s.winter@gmail.com">julian.s.winter@gmail.com</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Juniorenobmann -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Juniorenobmann + J+S Coach</span>
+                        <span class="vorstand-name">Peter Schnepf</span>
+                        <div class="vorstand-info">
+                            <p>📍 Wurmbühlstrasse 4, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41522331039">052 233 10 39</a> / <a href="tel:+41793720904">079 372 09
+                                    04</a></p>
+                            <p>📧 <a href="mailto:peter.schnepf@gmx.ch">peter.schnepf@gmx.ch</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Webmaster -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Webmaster</span>
+                        <span class="vorstand-name">Markus Schweingruber</span>
+                        <div class="vorstand-info">
+                            <p>📍 Büelstrasse 19, 8356 Ettenhausen</p>
+                            <p>📞 <a href="tel:+41754228888">075 422 88 88</a></p>
+                            <p>📧 <a href="mailto:soerfi@illumate.ch">soerfi@illumate.ch</a></p>
+                        </div>
+                    </div>
+
+                    <!-- BeisitzerDelegierter -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Beisitzer + Delegierter VR</span>
+                        <span class="vorstand-name">André Müller</span>
+                        <div class="vorstand-info">
+                            <p>📍 Seenerstrasse 194, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41763688868">076 368 88 68</a></p>
+                            <p>📧 <a
+                                    href="mailto:andre.mueller@tenniscenter-grueze.ch">andre.mueller@tenniscenter-grueze.ch</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Beisitzerin -->
+                    <div class="vorstand-card scroll-reveal">
+                        <span class="vorstand-role">Beisitzerin</span>
+                        <span class="vorstand-name">Alexa Gubler</span>
+                        <div class="vorstand-info">
+                            <p>📍 Randenblick 12, 8405 Winterthur</p>
+                            <p>📞 <a href="tel:+41762467009">076 246 70 09</a></p>
+                            <p>📧 <a href="mailto:alexa.gubler@gmx.ch">alexa.gubler@gmx.ch</a></p>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="vorstand-grid">
-                <!-- Präsidentin -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Präsidentin</span>
-                    <span class="vorstand-name">Alexandra Pfister</span>
-                    <div class="vorstand-info">
-                        <p>📍 Seenerstrasse 194, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41792338868">079 233 88 68</a></p>
-                        <p>📧 <a href="mailto:a.pfister@tenniscenter-grueze.ch">a.pfister@tenniscenter-grueze.ch</a></p>
-                    </div>
-                </div>
-
-                <!-- Vizepräsident -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Vizepräsident</span>
-                    <span class="vorstand-name">Sasa Glisic</span>
-                    <div class="vorstand-info">
-                        <p>📍 Elchweg 29, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41772659036">077 265 90 36</a></p>
-                        <p>📧 <a href="mailto:sasa.glisic@outlook.com">sasa.glisic@outlook.com</a></p>
-                    </div>
-                </div>
-
-                <!-- Aktuarin -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Aktuarin</span>
-                    <span class="vorstand-name">Laura Müller</span>
-                    <div class="vorstand-info">
-                        <p>📍 Landvogt-Waser-Strasse 26, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41788587674">078 858 76 74</a></p>
-                        <p>📧 <a href="mailto:laura.mueller2002@me.com">laura.mueller2002@me.com</a></p>
-                    </div>
-                </div>
-
-                <!-- Kassierin -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Kassierin + Vertrauensperson VERSA</span>
-                    <span class="vorstand-name">Vanessa Wegmann</span>
-                    <div class="vorstand-info">
-                        <p>📍 Seenerstrasse 196, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41762603323">076 260 33 23</a></p>
-                        <p>📧 <a href="mailto:v.wegmann@tenniscenter-grueze.ch">v.wegmann@tenniscenter-grueze.ch</a></p>
-                    </div>
-                </div>
-
-                <!-- Spielleiter -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Spielleiter + J+S Coach</span>
-                    <span class="vorstand-name">Julian Winter</span>
-                    <div class="vorstand-info">
-                        <p>📍 Gebhartstrasse 40, 8404 Winterthur</p>
-                        <p>📞 <a href="tel:+41765472231">076 547 22 31</a></p>
-                        <p>📧 <a href="mailto:julian.s.winter@gmail.com">julian.s.winter@gmail.com</a></p>
-                    </div>
-                </div>
-
-                <!-- Juniorenobmann -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Juniorenobmann + J+S Coach</span>
-                    <span class="vorstand-name">Peter Schnepf</span>
-                    <div class="vorstand-info">
-                        <p>📍 Wurmbühlstrasse 4, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41522331039">052 233 10 39</a> / <a href="tel:+41793720904">079 372 09
-                                04</a></p>
-                        <p>📧 <a href="mailto:peter.schnepf@gmx.ch">peter.schnepf@gmx.ch</a></p>
-                    </div>
-                </div>
-
-                <!-- Webmaster -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Webmaster</span>
-                    <span class="vorstand-name">Markus Schweingruber</span>
-                    <div class="vorstand-info">
-                        <p>📍 Büelstrasse 19, 8356 Ettenhausen</p>
-                        <p>📞 <a href="tel:+41754228888">075 422 88 88</a></p>
-                        <p>📧 <a href="mailto:soerfi@illumate.ch">soerfi@illumate.ch</a></p>
-                    </div>
-                </div>
-
-                <!-- BeisitzerDelegierter -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Beisitzer + Delegierter VR</span>
-                    <span class="vorstand-name">André Müller</span>
-                    <div class="vorstand-info">
-                        <p>📍 Seenerstrasse 194, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41763688868">076 368 88 68</a></p>
-                        <p>📧 <a
-                                href="mailto:andre.mueller@tenniscenter-grueze.ch">andre.mueller@tenniscenter-grueze.ch</a>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Beisitzerin -->
-                <div class="vorstand-card scroll-reveal">
-                    <span class="vorstand-role">Beisitzerin</span>
-                    <span class="vorstand-name">Alexa Gubler</span>
-                    <div class="vorstand-info">
-                        <p>📍 Randenblick 12, 8405 Winterthur</p>
-                        <p>📞 <a href="tel:+41762467009">076 246 70 09</a></p>
-                        <p>📧 <a href="mailto:alexa.gubler@gmx.ch">alexa.gubler@gmx.ch</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </section>
 
     <!-- Footer -->
-    
+
     <footer>
         <div class="container">
             <div class="footer-grid">

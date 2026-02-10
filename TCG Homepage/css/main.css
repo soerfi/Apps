@@ -18,11 +18,11 @@
 
     --color-bg: #FFFFFF;
     --color-bg-subtle: #F9FAFB;
-    --color-bg-dark: #0F1A0F;
+    --color-bg-dark: #121f12;
 
     --color-text: #0A0F0A;
     --color-text-muted: #4B5563;
-    --color-text-inv: #FFFFFF;
+    --color-text-inv: rgba(255, 255, 255, 0.5);
 
     /* Glassmorphism */
     --glass-bg: rgba(255, 255, 255, 0.7);
@@ -154,8 +154,7 @@ nav {
     transition: var(--transition);
 }
 
-nav.scrolled,
-.sub-page:not(.sub-page-dark) nav {
+nav.scrolled {
     padding: 1rem 0;
     background: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur));
@@ -185,7 +184,7 @@ nav .container {
     backdrop-filter: blur(8px);
 }
 
-.home-page nav:not(.scrolled) .nav-menu {
+nav:not(.scrolled) .nav-menu {
     background: rgba(255, 255, 255, 0.1);
 }
 
@@ -214,8 +213,7 @@ nav .container {
 }
 
 /* Force dark colors for scrolled or light background navs */
-nav.scrolled a,
-.sub-page:not(.sub-page-dark) nav a {
+nav.scrolled a {
     color: var(--color-text);
 }
 
@@ -297,6 +295,7 @@ nav.scrolled a,
 }
 
 .home-page nav:not(.scrolled) .dropdown-menu,
+.sub-page nav:not(.scrolled) .dropdown-menu,
 .sub-page-dark nav:not(.scrolled) .dropdown-menu {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -419,6 +418,7 @@ nav.scrolled a,
 
 /* Force white toggle on identified dark backgrounds */
 .home-page nav:not(.scrolled) .mobile-nav-toggle span,
+.sub-page nav:not(.scrolled) .mobile-nav-toggle span,
 .sub-page-dark nav:not(.scrolled) .mobile-nav-toggle span {
     background-color: #fff;
 }
@@ -669,33 +669,7 @@ a.card,
     display: block;
 }
 
-/* Elegant Thin Accent Line (Refined & Curved) */
-div.card::before,
-a.card::before,
-.event-card::before,
-.member-tile::before,
-.price-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 20px;
-    /* Area to allow radius to show */
-    border-left: 4px solid var(--color-secondary);
-    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-    transition: var(--transition);
-    pointer-events: none;
-    z-index: 10;
-}
 
-/* Thinner Line for Dark/Featured Cards */
-.price-card.featured::before,
-section[style*="background-color: var(--color-bg-dark)"] .card::before,
-.time-slot-card::before,
-.guest-card::before {
-    border-left-width: 2px;
-}
 
 /* Ensure content stays above the bar and border */
 .card-content,
@@ -765,10 +739,17 @@ a.card:hover,
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
+    /* Fix for border-radius "bleeding" and clipping issues */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    background-color: var(--color-bg-dark);
+    /* Fallback to hide white gaps */
 }
 
 .image-reveal img {
+    display: block;
     width: 100%;
+    height: auto;
     transition: transform 0.8s ease;
 }
 
@@ -842,12 +823,8 @@ a.card:hover,
     display: flex;
     justify-content: space-between;
     padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.price-card.featured .price-item {
-    border-color: rgba(255, 255, 255, 0.1);
-}
 
 /* Animation Classes */
 .scroll-reveal {

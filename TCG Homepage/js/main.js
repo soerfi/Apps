@@ -58,7 +58,9 @@ function initStickyNav() {
         } else {
             nav.classList.remove('scrolled');
             // Check if page expects a white logo on dark background initially
-            if (document.body.classList.contains('home-page') || document.body.classList.contains('sub-page-dark')) {
+            if (document.body.classList.contains('home-page') ||
+                document.body.classList.contains('sub-page') ||
+                document.body.classList.contains('sub-page-dark')) {
                 logoImg.src = `${basePath}tc_grueze_logo-white.svg`;
             } else {
                 logoImg.src = `${basePath}tc_grueze_logo.svg`;
