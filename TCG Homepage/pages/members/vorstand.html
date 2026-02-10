@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vorstand | TC Grüze Member Area</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <style>
+        .vorstand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .vorstand-card {
+            background: #fff;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-subtle);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .vorstand-role {
+            font-weight: 800;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .vorstand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .vorstand-info p {
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-text-muted);
+        }
+
+        .vorstand-info a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="../../images/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../../images/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../../images/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../../images/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../../images/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../../images/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../../images/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../../images/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="../../images/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../../images/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/favicon/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#214920">
+    <meta name="msapplication-TileImage" content="../../images/favicon/mstile-144x144.png">
+    <meta name="theme-color" content="#214920">
+</head>
+
+<body class="sub-page" style="background-color: var(--color-bg-subtle);">
+    <!-- Navigation -->
+    <nav id="main-nav" class="scrolled">
+        <div class="container">
+            <a href="../../index.html" class="logo">
+                <img src="../../images/icons/tc_grueze_logo.svg" alt="TC Grüze Logo" style="height: 50px;">
+            </a>
+            <div class="nav-inner">
+                <ul class="nav-menu">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="../club/index.html">Club</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="index.html">Abmelden</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section style="padding-top: 15rem;">
+        <div class="container">
+            <div class="scroll-reveal">
+                <a href="dashboard.html" style="text-decoration: none; color: var(--color-primary); font-weight: 700;">←
+                    Zurück zum Dashboard</a>
+                <h1 class="mt-2">Vorstands<span class="text-gradient">liste</span></h1>
+                <p>Ihre Ansprechpartner für alle Belange des Vereins.</p>
+            </div>
+
+            <div class="vorstand-grid">
+                <!-- Präsidentin -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Präsidentin</span>
+                    <span class="vorstand-name">Alexandra Pfister</span>
+                    <div class="vorstand-info">
+                        <p>📍 Seenerstrasse 194, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41792338868">079 233 88 68</a></p>
+                        <p>📧 <a href="mailto:a.pfister@tenniscenter-grueze.ch">a.pfister@tenniscenter-grueze.ch</a></p>
+                    </div>
+                </div>
+
+                <!-- Vizepräsident -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Vizepräsident</span>
+                    <span class="vorstand-name">Sasa Glisic</span>
+                    <div class="vorstand-info">
+                        <p>📍 Elchweg 29, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41772659036">077 265 90 36</a></p>
+                        <p>📧 <a href="mailto:sasa.glisic@outlook.com">sasa.glisic@outlook.com</a></p>
+                    </div>
+                </div>
+
+                <!-- Aktuarin -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Aktuarin</span>
+                    <span class="vorstand-name">Laura Müller</span>
+                    <div class="vorstand-info">
+                        <p>📍 Landvogt-Waser-Strasse 26, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41788587674">078 858 76 74</a></p>
+                        <p>📧 <a href="mailto:laura.mueller2002@me.com">laura.mueller2002@me.com</a></p>
+                    </div>
+                </div>
+
+                <!-- Kassierin -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Kassierin + Vertrauensperson VERSA</span>
+                    <span class="vorstand-name">Vanessa Wegmann</span>
+                    <div class="vorstand-info">
+                        <p>📍 Seenerstrasse 196, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41762603323">076 260 33 23</a></p>
+                        <p>📧 <a href="mailto:v.wegmann@tenniscenter-grueze.ch">v.wegmann@tenniscenter-grueze.ch</a></p>
+                    </div>
+                </div>
+
+                <!-- Spielleiter -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Spielleiter + J+S Coach</span>
+                    <span class="vorstand-name">Julian Winter</span>
+                    <div class="vorstand-info">
+                        <p>📍 Gebhartstrasse 40, 8404 Winterthur</p>
+                        <p>📞 <a href="tel:+41765472231">076 547 22 31</a></p>
+                        <p>📧 <a href="mailto:julian.s.winter@gmail.com">julian.s.winter@gmail.com</a></p>
+                    </div>
+                </div>
+
+                <!-- Juniorenobmann -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Juniorenobmann + J+S Coach</span>
+                    <span class="vorstand-name">Peter Schnepf</span>
+                    <div class="vorstand-info">
+                        <p>📍 Wurmbühlstrasse 4, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41522331039">052 233 10 39</a> / <a href="tel:+41793720904">079 372 09
+                                04</a></p>
+                        <p>📧 <a href="mailto:peter.schnepf@gmx.ch">peter.schnepf@gmx.ch</a></p>
+                    </div>
+                </div>
+
+                <!-- Webmaster -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Webmaster</span>
+                    <span class="vorstand-name">Markus Schweingruber</span>
+                    <div class="vorstand-info">
+                        <p>📍 Büelstrasse 19, 8356 Ettenhausen</p>
+                        <p>📞 <a href="tel:+41754228888">075 422 88 88</a></p>
+                        <p>📧 <a href="mailto:soerfi@illumate.ch">soerfi@illumate.ch</a></p>
+                    </div>
+                </div>
+
+                <!-- BeisitzerDelegierter -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Beisitzer + Delegierter VR</span>
+                    <span class="vorstand-name">André Müller</span>
+                    <div class="vorstand-info">
+                        <p>📍 Seenerstrasse 194, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41763688868">076 368 88 68</a></p>
+                        <p>📧 <a
+                                href="mailto:andre.mueller@tenniscenter-grueze.ch">andre.mueller@tenniscenter-grueze.ch</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Beisitzerin -->
+                <div class="vorstand-card scroll-reveal">
+                    <span class="vorstand-role">Beisitzerin</span>
+                    <span class="vorstand-name">Alexa Gubler</span>
+                    <div class="vorstand-info">
+                        <p>📍 Randenblick 12, 8405 Winterthur</p>
+                        <p>📞 <a href="tel:+41762467009">076 246 70 09</a></p>
+                        <p>📧 <a href="mailto:alexa.gubler@gmx.ch">alexa.gubler@gmx.ch</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <img src="../../images/icons/tc_grueze_logo-white.svg" alt="TC Grüze"
+                        style="height: 60px; margin-bottom: 2rem;">
+                    <p style="color: rgba(255,255,255,0.5);">Dein Premium-Ganzjahres-Tennisclub in Winterthur.
+                        Excellence
+                        in Sports since 1979.</p>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../../pages/club/index.html">Über Uns</a></li>
+                        <li><a href="../../pages/mitgliedschaft/index.html">Mitgliedschaft</a></li>
+                        <li><a href="../../pages/members/index.html">Members Area</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Rechtliches</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="../../pages/impressum/index.html">Impressum</a></li>
+                        <li><a href="../../pages/service/index.html">Dokumente</a></li>
+                        <li><a href="../../pages/members/platzordnung.html">Platzordnung</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Kontakt</h3>
+                    <p style="color: rgba(255,255,255,0.6);">Im Hölderli 9<br>8405 Winterthur<br>Schweiz</p>
+                    <p style="margin-top: 1.5rem;"><a href="mailto:info@tcgrueze.ch"
+                            style="color: var(--color-secondary);">info@tcgrueze.ch</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TC Grüze. Made with Passion in Winterthur.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="../../js/main.js"></script>
+</body>
+
+</html>

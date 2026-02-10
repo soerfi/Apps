@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geschichte | TC Grüze Winterthur</title>
+    <meta name="description"
+        content="Die bewegte Geschichte des TC Grüze - Von der Gründung 1979 bis heute. Lernen Sie unsere Meilensteine kennen.">
+    <link rel="stylesheet" href="../../css/main.css">
+    <style>
+        .history-slider {
+            position: relative;
+            width: 100%;
+            max-width: 1100px;
+            height: 550px;
+            margin: 4rem auto 0;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 4px solid #fff;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            /* Slow premium cross-fade */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            z-index: 2;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Timeline Rail Design */
+        .timeline-rail {
+            position: absolute;
+            right: 2rem;
+            top: 15%;
+            bottom: 15%;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-dot {
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Large hit area for dots */
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            inset: -15px;
+        }
+
+        .timeline-dot.active {
+            background: var(--color-secondary);
+            transform: scale(1.4);
+            box-shadow: 0 0 15px var(--color-secondary);
+        }
+
+        .year-pill {
+            position: absolute;
+            right: 4rem;
+            top: 0;
+            background: var(--color-primary);
+            color: var(--color-secondary);
+            padding: 0.5rem 1.2rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 20;
+            pointer-events: none;
+            transition: top 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+            transform: translateY(-50%);
+        }
+
+        @media (max-width: 768px) {
+            .history-slider {
+                height: 380px;
+                /* Slightly taller for mobile content */
+                margin-top: 2rem;
+                max-width: 100%;
+                border-width: 2px;
+            }
+
+            .timeline-rail {
+                right: 0.8rem;
+                top: 10%;
+                bottom: 10%;
+            }
+
+            .year-pill {
+                right: 2.2rem;
+                font-size: 0.9rem;
+                padding: 0.3rem 0.8rem;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .timeline-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            .milestones-list li {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+
+            .milestones-list li strong {
+                min-width: auto !important;
+                font-size: 1.1rem;
+            }
+
+            .milestones-list li span {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+            /* Mobile Image Order for Growth and Pickleball Sections */
+            .growth-section .grid-2,
+            .pickleball-section .grid-2 {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .growth-section .image-reveal,
+            .pickleball-section .image-reveal {
+                order: 2;
+                margin-top: 2rem;
+            }
+
+            footer h3::after {
+                content: '';
+                display: block;
+                width: 40px;
+                height: 2px;
+                background: var(--color-secondary);
+                margin: 0.5rem auto 0;
+            }
+        }
+
+        .milestones-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .milestones-list li {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+        }
+
+        .milestones-list li strong {
+            color: var(--color-primary);
+            min-width: 150px;
+        }
+
+        .milestones-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+    </style>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="../../images/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../../images/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../../images/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../../images/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../../images/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../../images/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../../images/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../../images/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="../../images/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../../images/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/favicon/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#214920">
+    <meta name="msapplication-TileImage" content="../../images/favicon/mstile-144x144.png">
+    <meta name="theme-color" content="#214920">
+</head>
+
+<body class="sub-page sub-page-dark">
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="container">
+            <a href="../../index.html" class="logo">
+                <img src="../../images/icons/tc_grueze_logo-white.svg" alt="TC Grüze Logo" style="height: 50px;">
+            </a>
+            <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-inner">
+                <ul class="nav-menu">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../club/index.html" class="active">Club</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="index.html">Über uns</a></li>
+                            <li><a href="jahresprogramm.html">Jahresprogramm</a></li>
+                            <li><a href="geschichte.html" class="active">Geschichte</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../mitgliedschaft/index.html">Mitgliedschaft</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../sport/index.html">Sport</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../sport/index.html">Tennis</a></li>
+                            <li><a href="../sport/pickleball.html">Pickleball</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../events/index.html">Events</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../service/index.html">Service</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../service/spielzeiten.html">Spielzeiten</a></li>
+                            <li><a href="../service/reglement.html">Reglement</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../kontakt/index.html">Kontakt</a></li>
+                    <li><a href="../members/index.html">Members</a></li>
+                </ul>
+                <div class="nav-cta mobile-hide">
+                    <a href="https://mein.fairgate.ch/tcgrueze/register/NTI3Mw==" class="btn-join" target="_blank"
+                        rel="noopener noreferrer">Mitglied werden</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero"
+        style="background-image: url('../../images/club/tennis-center-grueze-fassade.webp'); height: 30vh; min-height: 300px; background-position: center;">
+        <div class="container">
+            <div class="hero-content scroll-reveal">
+                <h1>Unsere <span class="text-gradient">Geschichte</span></h1>
+                <p>Tennisleidenschaft in Winterthur-Seen - seit über 40 Jahren.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Intro -->
+    <section>
+        <div class="container">
+            <div class="scroll-reveal text-center mb-4" style="max-width: 800px; margin: 0 auto;">
+                <h2 class="mb-2">Die Geschichte des <span class="text-gradient">TC Grüze</span></h2>
+                <p class="lead">Der Tennisclub Grüze (TCG) ist mehr als nur ein Sportverein; er ist ein fester
+                    Bestandteil der Winterthurer Tennisszene und eng mit dem Tenniszentrum Grüze (heute meist
+                    Sportzentrum im „Hölderli“) verbunden. Seit unserer Gründung bieten wir Tennisbegeisterten ein
+                    Zuhause - vom ambitionierten Interclub-Spieler bis zum Plausch-Doppel.</p>
+            </div>
+
+            <!-- History Slider -->
+            <div class="history-slider scroll-reveal" id="historySlider">
+                <!-- Timeline Rail -->
+                <div class="timeline-rail" id="timelineRail"></div>
+                <!-- Sliding Year Pill -->
+                <div class="year-pill" id="yearPill">1978</div>
+
+                <div class="slide active" data-year="1978">
+                    <picture>
+                        <source srcset="../../images/club/1978.webp" type="image/webp">
+                        <img src="../../images/club/1978.jpg" alt="TC Grüze 1978">
+                    </picture>
+                </div>
+                <div class="slide" data-year="1984">
+                    <picture>
+                        <source srcset="../../images/club/1984.webp" type="image/webp">
+                        <img src="../../images/club/1984.jpg" alt="TC Grüze 1984">
+                    </picture>
+                </div>
+                <div class="slide" data-year="1995">
+                    <picture>
+                        <source srcset="../../images/club/1995.webp" type="image/webp">
+                        <img src="../../images/club/1995.jpg" alt="TC Grüze 1995">
+                    </picture>
+                </div>
+                <div class="slide" data-year="1999">
+                    <picture>
+                        <source srcset="../../images/club/1999.webp" type="image/webp">
+                        <img src="../../images/club/1999.jpg" alt="TC Grüze 1999">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2002">
+                    <picture>
+                        <source srcset="../../images/club/2002.webp" type="image/webp">
+                        <img src="../../images/club/2002.jpg" alt="TC Grüze 2002">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2005">
+                    <picture>
+                        <source srcset="../../images/club/2005.webp" type="image/webp">
+                        <img src="../../images/club/2005.jpg" alt="TC Grüze 2005">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2008">
+                    <picture>
+                        <source srcset="../../images/club/2008.webp" type="image/webp">
+                        <img src="../../images/club/2008.jpg" alt="TC Grüze 2008">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2011">
+                    <picture>
+                        <source srcset="../../images/club/2011.webp" type="image/webp">
+                        <img src="../../images/club/2011.jpg" alt="TC Grüze 2011">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2014">
+                    <picture>
+                        <source srcset="../../images/club/2014.webp" type="image/webp">
+                        <img src="../../images/club/2014.jpg" alt="TC Grüze 2014">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2019">
+                    <picture>
+                        <source srcset="../../images/club/2019.webp" type="image/webp">
+                        <img src="../../images/club/2019.jpg" alt="TC Grüze 2019">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2022">
+                    <picture>
+                        <source srcset="../../images/club/2022.webp" type="image/webp">
+                        <img src="../../images/club/2022.jpg" alt="TC Grüze 2022">
+                    </picture>
+                </div>
+                <div class="slide" data-year="2025">
+                    <picture>
+                        <source srcset="../../images/club/2025.webp" type="image/webp">
+                        <img src="../../images/club/2025.jpg" alt="TC Grüze 2025">
+                    </picture>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- Die Anfänge -->
+    <section style="background-color: var(--color-bg-dark); color: #fff;">
+        <div class="container">
+            <div class="grid-2">
+                <div class="scroll-reveal">
+                    <h2 style="color: var(--color-secondary);">Die Anfänge (1979 - 1980er)</h2>
+                    <p class="mb-2">Alles begann im Herbst 1979. Am 14. November 1979 fand die erste ordentliche
+                        Generalversammlung im Hotel Römertor statt; die Geburtsstunde des Clubs. Schon damals war die
+                        enge Symbiose mit der „Grüze AG“ (dem Betreiber der Halle und Aussenplätze) das Fundament des
+                        Vereins.</p>
+                    <p>Die 80er Jahre waren geprägt vom Aufbau des Clublebens:</p>
+                    <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+                        <li style="margin-bottom: 0.5rem;">• 1982 erschien die erste Ausgabe der „TC-News“, um die
+                            Mitglieder besser zu informieren.</li>
+                        <li style="margin-bottom: 0.5rem;">• Es etablierten sich frühe Traditionen wie das
+                            Plauschturnier und Jassabende, die das gesellige Beisammensein förderten.</li>
+                    </ul>
+                </div>
+                <div class="image-reveal scroll-reveal">
+                    <picture>
+                        <source srcset="../../images/club/roemertor.webp" type="image/webp">
+                        <img src="../../images/club/roemertor.jpg" alt="Gründung 1979 im Hotel Römertor"
+                            style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wachstum -->
+    <section class="growth-section">
+        <div class="container">
+            <div class="grid-2">
+                <div class="image-reveal scroll-reveal">
+                    <picture>
+                        <source srcset="../../images/club/40-jahre-tcg.webp" type="image/webp">
+                        <img src="../../images/club/40-jahre-tcg.webp" alt="40 Jahre TC Grüze"
+                            style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    </picture>
+                </div>
+                <div class="scroll-reveal">
+                    <h2>Wachstum und <span class="text-gradient">Feierlichkeiten</span> (1990er)</h2>
+                    <p class="mb-2">In den 90er Jahren wuchs der Club beachtlich. 1992 zählte der TC Grüze bereits über
+                        120 Mitglieder. Der Club engagierte sich auch stark im lokalen Leben in Seen, nahm an der 1.
+                        August-Feier teil und half an der „Seemer Dorfet“ mit.</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 0.5rem;">• 1999 feierte der TCG sein 20-jähriges Jubiläum mit einem
+                            grossen Fest.</li>
+                        <li style="margin-bottom: 0.5rem;">• Sportlich war der Club aktiv in den WTV (Winterthurer
+                            Tennisvereinigung) eingebunden und nahm regelmässig an Interclub-Meisterschaften teil.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modernisierung -->
+    <section style="background-color: var(--color-bg-dark); color: #fff;">
+        <div class="container">
+            <div class="grid-2">
+                <div class="scroll-reveal">
+                    <h2 style="color: var(--color-secondary);">Modernisierung (2000er - 2010er)</h2>
+                    <p class="mb-2">Das neue Jahrtausend brachte frischen Wind und wichtige Investitionen in die
+                        Spielbedingungen. Im Jahr 2000 präsentierte sich der Club mit einem neuen Logo. 2004 wurde der
+                        Vertrag mit der Grüze AG erneuert und die Identität als „Tennisclub Grüze“ gefestigt.</p>
+                    <p>Ein grosser Meilenstein für den Spielbetrieb war die Erneuerung der Aussenplätze. Im Jahr 2018
+                        wurden die Plätze komplett saniert und neu erstellt, was die Qualität der Matches und die
+                        Saisonverlängerung (dank Allwetter-Eigenschaften) deutlich verbesserte.</p>
+                </div>
+                <div class="image-reveal scroll-reveal">
+                    <picture>
+                        <source srcset="../../images/club/tcg-overview.webp" type="image/webp">
+                        <img src="../../images/club/tcg-overview.jpg" alt="TC Grüze Overview"
+                            style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jüngste Geschichte -->
+    <section>
+        <div class="container">
+            <div class="scroll-reveal mb-4" style="margin-bottom: 2rem;">
+                <h2>Die jüngste Geschichte: <span class="text-gradient">Neues Zuhause & neue Sportarten</span></h2>
+                <p style="margin-top: 1rem;">Die 2020er Jahre markieren wohl den größten Schritt in Sachen
+                    Unabhängigkeit und Vielfalt. Während
+                    der Pandemie hielt der Verein zusammen, doch der Wunsch nach einem eigenen Ort für das gesellige
+                    "Danach" wuchs.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="scroll-reveal">
+                    <h3>2023: Unser eigenes Clubhaus</h3>
+                    <p class="mt-1">Das absolute Highlight der jüngsten Geschichte war die Realisierung unseres eigenen
+                        Clubhauses.
+                        Nach intensiver Planung konnten wir am 30. September 2023 unser neues Clubhaus mit einem grossen
+                        Fest und über 50 Gästen offiziell eröffnen. Endlich haben wir einen eigenen Ort direkt bei den
+                        Plätzen.</p>
+                </div>
+                <div class="image-reveal scroll-reveal">
+                    <picture>
+                        <source srcset="../../images/club/clubhaus-innen.webp" type="image/webp">
+                        <img src="../../images/club/clubhaus-innen.jpg" alt="TC Grüze Clubhaus Innen"
+                            style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pickleball -->
+    <section class="pickleball-section" style="background-color: var(--color-bg-dark); color: #fff;">
+        <div class="container">
+            <div class="grid-2">
+                <div class="image-reveal scroll-reveal">
+                    <picture>
+                        <source srcset="../../images/club/pickleball-halle.webp" type="image/webp">
+                        <img src="../../images/club/pickleball-halle.jpg" alt="Pickleball Halle"
+                            style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    </picture>
+                </div>
+                <div class="scroll-reveal">
+                    <h3 style="color: var(--color-secondary);">Integration neuer Trends: Pickleball</h3>
+                    <p class="mt-1">Der TC Grüze verschliesst sich auch neuen Trends nicht. Im Jahr 2025 wurde die „IG
+                        Pickleball“
+                        ins Leben gerufen und vorgestellt. Damit öffnet sich der Club aktiv für diese rasant wachsende
+                        Sportart und integriert Pickleball-Begeisterte in das Vereinsleben.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meilensteine -->
+    <section style="background-color: var(--color-bg-light);">
+        <div class="container">
+            <div class="text-center mb-4 scroll-reveal">
+                <h2>Meilensteine im <span class="text-gradient">Überblick</span></h2>
+            </div>
+            <div class="scroll-reveal"
+                style="max-width: 900px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
+                <ul class="milestones-list">
+                    <li>
+                        <strong>5. April 1979</strong>
+                        <span>Gründung: Der Tennis-Club Grüze wurde unter Mithilfe der Tennis- und Squash AG offiziell
+                            ins
+                            Leben gerufen.</span>
+                    </li>
+                    <li>
+                        <strong>14. Nov 1979</strong>
+                        <span>Erste GV: Die erste ordentliche Generalversammlung fand im Hotel Römertor statt, nachdem
+                            der Club seine erste Saison mit 33 Gründungsmitgliedern abgeschlossen hatte.</span>
+                    </li>
+                    <li>
+                        <strong>1980</strong>
+                        <span>Bau der Tennishalle: In diesem Jahr wurde die neue Tennishalle gebaut, was die Grundlage
+                            für den ganzjährigen Spielbetrieb bildete.</span>
+                    </li>
+                    <li>
+                        <strong>1982</strong>
+                        <span>Erste "TC-News": Die erste Ausgabe der Clubzeitung wurde veröffentlicht, um die Mitglieder
+                            besser über das Vereinsleben zu informieren.</span>
+                    </li>
+                    <li>
+                        <strong>10. Juni 1989</strong>
+                        <span>10-jähriges Jubiläum: Das erste grosse Jubiläum wurde mit einer Feier für alle Mitglieder
+                            und Gründungsmitglieder in der Corti-Hütte begangen.</span>
+                    </li>
+                    <li>
+                        <strong>Juli/Aug 1999</strong>
+                        <span>Hallensanierung: In der Halle 2 wurde ein neuer Boden (Bross-slide) eingebaut, um den
+                            Spielkomfort zu verbessern.</span>
+                    </li>
+                    <li>
+                        <strong>1. Mai 2001</strong>
+                        <span>Modernisierung des Spielbetriebs: Einführung eines neuen, verbesserten Reservations- und
+                            Spielpartnersuchsystems zur effizienteren Platznutzung.</span>
+                    </li>
+                    <li>
+                        <strong>Juli 2018</strong>
+                        <span>Aussenplätze & 40 Jahre TCG: Pünktlich zum 40-jährigen Bestehen des Vereins wurden die
+                            drei neuen Aussenplätze in Betrieb genommen.</span>
+                    </li>
+                    <li>
+                        <strong>8. Juli 2022</strong>
+                        <span>Neues Clubhaus: Nach dem Baustart im März erfolgte im Juli die feierliche
+                            Schlüsselübergabe für das neu gebaute Clubhaus bei den Aussenplätzen.</span>
+                    </li>
+                    <li>
+                        <strong>2025</strong>
+                        <span>Einführung der „IG Pickleball“ und Start des Tennisball-Recyclings.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <img src="../../images/icons/tc_grueze_logo-white.svg" alt="TC Grüze"
+                        style="height: 60px; margin-bottom: 2rem;">
+                    <p style="color: rgba(255,255,255,0.5);">Dein Premium-Ganzjahres-Tennisclub in Winterthur.
+                        Excellence
+                        in Sports since 1979.</p>
+                </div>
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="../../pages/club/index.html">Über Uns</a></li>
+                        <li><a href="../../pages/mitgliedschaft/index.html">Mitgliedschaft</a></li>
+                        <li><a href="../../pages/members/index.html">Members Area</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Rechtliches</h3>
+                    <ul style="list-style: none;">
+                        <li><a href="../../pages/impressum/index.html">Impressum</a></li>
+                        <li><a href="../../pages/service/index.html">Dokumente</a></li>
+                        <li><a href="../../pages/members/platzordnung.html">Platzordnung</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Kontakt</h3>
+                    <p style="color: rgba(255,255,255,0.6);">Im Hölderli 9<br>8405 Winterthur<br>Schweiz</p>
+                    <p style="margin-top: 1.5rem;"><a href="mailto:info@tcgrueze.ch"
+                            style="color: var(--color-secondary);">info@tcgrueze.ch</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 TC Grüze. Made with Passion in Winterthur.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // History Slider Animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const slider = document.getElementById('historySlider');
+            const slides = slider.querySelectorAll('.slide');
+            const rail = document.getElementById('timelineRail');
+            const yearPill = document.getElementById('yearPill');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            let slideInterval;
+
+            // Create dots dynamically
+            slides.forEach((slide, index) => {
+                const dot = document.createElement('div');
+                dot.className = `timeline-dot ${index === 0 ? 'active' : ''}`;
+
+                // Click to jump to year
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    clearInterval(slideInterval);
+                    currentSlide = index;
+                    updateSlider();
+                    startAutoPlay();
+                });
+
+                rail.appendChild(dot);
+            });
+
+            const dots = rail.querySelectorAll('.timeline-dot');
+
+            function updateSlider() {
+                slides.forEach((slide, index) => {
+                    if (index === currentSlide) {
+                        slide.classList.add('active');
+                        dots[index].classList.add('active');
+
+                        // Update Year Pill
+                        yearPill.textContent = slide.dataset.year;
+
+                        // Calculate rail position: 15% (top offset) + (70% range * ratio)
+                        const ratio = index / (totalSlides - 1);
+                        const topPercentage = 15 + (70 * ratio);
+                        yearPill.style.top = `${topPercentage}%`;
+                        yearPill.style.opacity = '1';
+                    } else {
+                        slide.classList.remove('active');
+                        dots[index].classList.remove('active');
+                    }
+                });
+            }
+
+            function startAutoPlay() {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(() => {
+                    currentSlide = (currentSlide + 1) % totalSlides;
+                    updateSlider();
+                }, 5000); // 3.5s display + 1.5s slow transition
+            }
+
+            // Swipe Support for Mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            slider.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            slider.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                if (touchEndX < touchStartX - swipeThreshold) {
+                    // Swipe Left -> Next
+                    clearInterval(slideInterval);
+                    currentSlide = (currentSlide + 1) % totalSlides;
+                    updateSlider();
+                    startAutoPlay();
+                } else if (touchEndX > touchStartX + swipeThreshold) {
+                    // Swipe Right -> Prev
+                    clearInterval(slideInterval);
+                    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    updateSlider();
+                    startAutoPlay();
+                }
+            }
+
+            // Initial call
+            updateSlider();
+            startAutoPlay();
+        });
+    </script>
+</body>
+
+</html>

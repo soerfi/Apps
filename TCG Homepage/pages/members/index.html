@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Members Login | TC Grüze Winterthur</title>
+    <meta name="description"
+        content="Melde dich im Mitgliederbereich des TC Grüze an, um exklusive Inhalte, Platzreservationen und interne Neuigkeiten zu erhalten.">
+    <link rel="stylesheet" href="../../css/main.css">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="57x57" href="../../images/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../../images/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../../images/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../../images/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../../images/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../../images/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../../images/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../../images/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="../../images/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../../images/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/favicon/favicon-16x16.png">
+    <meta name="msapplication-TileColor" content="#214920">
+    <meta name="msapplication-TileImage" content="../../images/favicon/mstile-144x144.png">
+    <meta name="theme-color" content="#214920">
+</head>
+
+<body class="sub-page sub-page-dark login-page">
+    <!-- Navigation -->
+    <nav id="main-nav">
+        <div class="container">
+            <a href="../../index.html" class="logo">
+                <img src="../../images/icons/tc_grueze_logo-white.svg" alt="TC Grüze Logo" style="height: 50px;">
+            </a>
+            <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-inner">
+                <ul class="nav-menu">
+                    <li><a href="../../index.html">Home</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../club/index.html">Club</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../club/index.html">Über uns</a></li>
+                            <li><a href="../club/jahresprogramm.html">Jahresprogramm</a></li>
+                            <li><a href="../club/geschichte.html">Geschichte</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../mitgliedschaft/index.html">Mitgliedschaft</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../sport/index.html">Sport</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../sport/index.html">Tennis</a></li>
+                            <li><a href="../sport/pickleball.html">Pickleball</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../events/index.html">Events</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="../service/index.html">Service</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../service/spielzeiten.html">Spielzeiten</a></li>
+                            <li><a href="../service/reglement.html">Reglement</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="../kontakt/index.html">Kontakt</a></li>
+                    <li><a href="index.html" class="active">Members</a></li>
+                </ul>
+                <div class="nav-cta mobile-hide">
+                    <a href="https://mein.fairgate.ch/tcgrueze/register/NTI3Mw==" class="btn-join external-link"
+                        target="_blank" rel="noopener noreferrer">Mitglied werden</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section>
+        <div class="container">
+            <div class="scroll-reveal" style="max-width: 500px; margin: 0 auto;">
+                <div class="glass-card" style="padding: 4rem; border-radius: var(--radius-lg);">
+                    <div class="text-center mb-3">
+                        <span style="font-size: 3rem;">🔐</span>
+                        <h2 class="mt-1">Member <span class="text-gradient">Login</span></h2>
+                        <p style="color: #666;">Willkommen zurück im Club.</p>
+                    </div>
+
+                    <div id="login-error" class="error-message"
+                        style="display: none; background: #fff5f5; color: #c53030; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 2rem; font-size: 0.9rem; text-align: center; border: 1px solid #feb2b2;">
+                    </div>
+
+                    <form id="login-form">
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label
+                                style="display: block; font-weight: 700; margin-bottom: 0.5rem; font-size: 0.85rem; text-transform: uppercase; color: #888;">Club-Passwort</label>
+                            <input type="password" id="password" required
+                                style="width: 100%; padding: 1.2rem; border: 1px solid #eee; border-radius: var(--radius-sm); background: #f9f9f9;"
+                                placeholder="Bitte Passwort eingeben">
+                        </div>
+                        <button type="submit" class="btn btn-primary"
+                            style="width: 100%; padding: 1.2rem;">Anmelden</button>
+                    </form>
+
+                    <div class="text-center mt-3" style="font-size: 0.85rem; color: #999;">
+                        <p>Zugang nur für Mitglieder mit dem aktuellen Club-Passwort.</p>
+                        <p class="mt-1"><a href="../kontakt/index.html" style="color: var(--color-primary);">Zugang
+                                anfragen</a> | <a href="#" style="color: #999;">Passwort vergessen?</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="margin-top: 0;">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 TC Grüze. Designed for Excellence.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/auth.js"></script>
+</body>
+
+</html>

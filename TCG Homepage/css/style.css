@@ -1,0 +1,602 @@
+/* 
+ * TC Grüze Website
+ * Hauptstil-Datei
+ */
+
+/* ===== Variablen ===== */
+:root {
+    /* Primärfarben */
+    --color-white: #FFFFFF;
+    --color-light-gray: #F8F9FA;
+    --color-medium-gray: #6C757D;
+    --color-dark-gray: #212529;
+    
+    /* Akzentfarben */
+    --color-tennis-green: #2E7D32;
+    --color-court-orange: #FF8A50;
+    --color-tennis-yellow: #FDD835;
+    
+    /* Navigationsfarben */
+    --color-nav-home: #2E7D32;
+    --color-nav-club: #1976D2;
+    --color-nav-mitgliedschaft: #9C27B0;
+    --color-nav-sport: #F44336;
+    --color-nav-events: #FF9800;
+    --color-nav-service: #00BCD4;
+    --color-nav-kontakt: #E91E63;
+    --color-nav-members: #3F51B5;
+    
+    /* Schriftarten */
+    --font-primary: 'Inter', sans-serif;
+    --font-headings: 'Montserrat', sans-serif;
+    
+    /* Abstände */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+    
+    /* Container */
+    --container-max-width: 1200px;
+    --container-padding: 1rem;
+    
+    /* Border-Radius */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    
+    /* Box-Shadow */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Reset & Base Styles ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--color-dark-gray);
+    background-color: var(--color-white);
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    color: var(--color-tennis-green);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-court-orange);
+}
+
+ul, ol {
+    list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-headings);
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: var(--spacing-md);
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+p {
+    margin-bottom: var(--spacing-md);
+}
+
+.container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+}
+
+.section {
+    padding: var(--spacing-xxl) 0;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.bg-light {
+    background-color: var(--color-light-gray);
+}
+
+.rounded-image {
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+
+.center-button {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+}
+
+/* ===== Buttons ===== */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: none;
+    font-family: var(--font-primary);
+}
+
+.btn-primary {
+    background-color: var(--color-tennis-green);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: #1b5e20;
+    color: var(--color-white);
+}
+
+.btn-secondary {
+    background-color: var(--color-court-orange);
+    color: var(--color-dark-gray);
+}
+
+.btn-secondary:hover {
+    background-color: #ff6d24;
+    color: var(--color-dark-gray);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--color-tennis-green);
+    color: var(--color-tennis-green);
+}
+
+.btn-outline:hover {
+    background-color: var(--color-tennis-green);
+    color: var(--color-white);
+}
+
+/* ===== Header & Navigation ===== */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-md) 0;
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo a {
+    display: block;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+}
+
+.nav-list {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.nav-link {
+    display: block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-weight: 500;
+    position: relative;
+    color: var(--color-dark-gray);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: transparent;
+    transition: background-color var(--transition-fast);
+}
+
+.nav-link.home::after { background-color: var(--color-nav-home); }
+.nav-link.club::after { background-color: var(--color-nav-club); }
+.nav-link.mitgliedschaft::after { background-color: var(--color-nav-mitgliedschaft); }
+.nav-link.sport::after { background-color: var(--color-nav-sport); }
+.nav-link.events::after { background-color: var(--color-nav-events); }
+.nav-link.service::after { background-color: var(--color-nav-service); }
+.nav-link.kontakt::after { background-color: var(--color-nav-kontakt); }
+.nav-link.members::after { background-color: var(--color-nav-members); }
+
+.nav-link:hover::after,
+.nav-item.active .nav-link::after {
+    opacity: 1;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 24px;
+    position: relative;
+}
+
+.menu-toggle span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--color-dark-gray);
+    border-radius: 3px;
+    transition: all var(--transition-fast);
+}
+
+.menu-toggle span:nth-child(1) { top: 0; }
+.menu-toggle span:nth-child(2) { top: 10px; }
+.menu-toggle span:nth-child(3) { top: 20px; }
+
+/* ===== Hero Section ===== */
+.hero {
+    position: relative;
+    height: 70vh;
+    min-height: 500px;
+    overflow: hidden;
+}
+
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-xl);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: var(--color-white);
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-content p {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-lg);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== About Section ===== */
+.section-content {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: center;
+}
+
+.section-content .text-content,
+.section-content .image-content {
+    flex: 1;
+}
+
+.section-content.reverse {
+    flex-direction: row-reverse;
+}
+
+/* ===== Events Section ===== */
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.event-card {
+    display: flex;
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.event-date {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--color-tennis-green);
+    color: var(--color-white);
+    min-width: 80px;
+    text-align: center;
+}
+
+.event-date .day {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.event-date .date {
+    font-size: 0.875rem;
+    margin-top: var(--spacing-xs);
+}
+
+.event-details {
+    padding: var(--spacing-md);
+    flex: 1;
+}
+
+.event-details h3 {
+    margin-bottom: var(--spacing-xs);
+    font-size: 1.25rem;
+}
+
+.event-time {
+    color: var(--color-medium-gray);
+    font-size: 0.875rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.event-description {
+    font-size: 0.9375rem;
+    margin-bottom: 0;
+}
+
+/* ===== Membership Teaser Section ===== */
+.membership-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.membership-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.membership-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.membership-card.featured {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.membership-card.featured:hover {
+    transform: scale(1.05) translateY(-5px);
+}
+
+.card-header {
+    padding: var(--spacing-md);
+    text-align: center;
+    color: var(--color-white);
+}
+
+.card-header.tennis {
+    background-color: var(--color-tennis-green);
+}
+
+.card-header.pickleball {
+    background-color: var(--color-court-orange);
+}
+
+.card-header.combo {
+    background-color: var(--color-tennis-yellow);
+    color: var(--color-dark-gray);
+}
+
+.card-header h3 {
+    margin-bottom: 0;
+}
+
+.card-body {
+    padding: var(--spacing-lg);
+}
+
+.price-list {
+    list-style: none;
+    margin-bottom: var(--spacing-md);
+}
+
+.price-list li {
+    margin-bottom: var(--spacing-xs);
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-note {
+    font-size: 0.875rem;
+    color: var(--color-medium-gray);
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.card-footer {
+    padding: var(--spacing-md);
+    text-align: center;
+    border-top: 1px solid var(--color-light-gray);
+}
+
+/* ===== Downloads Section ===== */
+.downloads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.download-card {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.download-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    color: var(--color-dark-gray);
+}
+
+.download-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-light-gray);
+    border-radius: 50%;
+    margin-right: var(--spacing-md);
+    color: var(--color-tennis-green);
+}
+
+.download-details h3 {
+    margin-bottom: var(--spacing-xs);
+    font-size: 1.125rem;
+}
+
+.download-details p {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+    color: var(--color-medium-gray);
+}
+
+/* ===== Footer ===== */
+.site-footer {
+    background-color: var(--color-dark-gray);
+    color: var(--color-white);
+    padding: var(--spacing-xl) 0 var(--spacing-md);
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.footer-logo {
+    margin-bottom: var(--spacing-md);
+}
+
+.footer-address p {
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-address a {
+    color: var(--color-white);
+}
+
+.footer-address a:hover {
+    color: var(--color-tennis-yellow);
+}
+
+.footer-links h3 {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.footer-links ul li {
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-links a {
+    color: var(--color-white);
+    opacity: 0.8;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+    color: var(--color-tennis-yellow);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
