@@ -14,8 +14,8 @@
     background-color: var(--color-light-gray);
 }
 
-/* Ensure navigation text is white on heroes/dark backgrounds in members area */
-#main-nav:not(.scrolled) .nav-menu a {
+/* Ensure navigation text is white on heroes/dark backgrounds in members area (top-level only) */
+#main-nav:not(.scrolled) .nav-menu>li>a {
     color: #fff !important;
 }
 
