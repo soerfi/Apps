@@ -77,11 +77,17 @@ h4 {
 
 h1 {
     font-size: clamp(2.5rem, 8vw, 4.5rem);
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 h2 {
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 h3 {
@@ -982,6 +988,10 @@ footer p {
     /* Needs mobile menu JS */
     section {
         padding: 4rem 0;
+    }
+
+    .glass-card {
+        padding: 2rem !important;
     }
 }
 
