@@ -1092,3 +1092,74 @@ footer p {
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
+
+/* Logo Slider */
+.logo-slider {
+    padding: 60px 0;
+    overflow: hidden;
+    background: #fff;
+    white-space: nowrap;
+    position: relative;
+    border-top: 1px solid var(--color-bg-subtle);
+}
+
+.logo-slider::before,
+.logo-slider::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    z-index: 2;
+}
+
+.logo-slider::before {
+    left: 0;
+    background: linear-gradient(to right, #fff, transparent);
+}
+
+.logo-slider::after {
+    right: 0;
+    background: linear-gradient(to left, #fff, transparent);
+}
+
+.logo-track {
+    display: inline-flex;
+    animation: scroll 30s linear infinite;
+    gap: 80px;
+    align-items: center;
+}
+
+.logo-item {
+    flex: 0 0 auto;
+    width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: var(--transition);
+}
+
+.logo-item:hover {
+    filter: grayscale(0);
+    opacity: 1;
+}
+
+.logo-item img {
+    max-width: 100%;
+    height: 80px;
+    object-fit: contain;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(-280px * 3));
+    }
+
+    /* (width 200 + gap 80) * count 3 */
+}
