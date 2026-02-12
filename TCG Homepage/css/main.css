@@ -1173,3 +1173,147 @@ footer p {
 
     /* (width 200 + gap 80) * count 3 */
 }
+
+/* =========================================
+   Refactored Utilities (from Inline Styles)
+   ========================================= */
+
+/* Hero Utilities */
+.hero-home {
+    background-position: 68% 44%;
+}
+
+.badge-hero {
+    background: var(--color-secondary);
+    color: var(--color-primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.btn-secondary-white {
+    border-color: #fff;
+    color: #fff;
+}
+
+.btn-secondary-white:hover {
+    background: #fff;
+    color: var(--color-primary);
+}
+
+/* Dark Section Utilities */
+.section-dark {
+    background-color: var(--color-bg-dark);
+    color: #fff;
+}
+
+.section-dark p {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.text-secondary {
+    color: var(--color-secondary);
+}
+
+.text-muted-dark {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Pickleball Feature List */
+.pickleball-logo {
+    width: 60%;
+    max-width: 500px;
+    height: auto;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.feature-icon-circle {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    background: var(--color-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.feature-text {
+    font-weight: 500;
+    color: var(--color-text-inv);
+    font-size: 1.1rem;
+}
+
+/* Event & Membership Utils */
+.event-time {
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.badge-featured {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--color-accent);
+    color: #fff;
+    padding: 0.3rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+}
+
+/* CTA Utils */
+.cta-content {
+    position: relative;
+    z-index: 2;
+}
+
+.cta-decorator {
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    font-size: 15rem;
+    opacity: 0.05;
+    transform: rotate(-15deg);
+    color: #fff;
+    pointer-events: none;
+    user-select: none;
+}
+
+.btn-lg {
+    padding: 1.2rem 3rem;
+}
+
+/* Footer Utils */
+.footer-logo {
+    height: 60px;
+    margin-bottom: 2rem;
+}
+
+.footer-links {
+    list-style: none;
+}
