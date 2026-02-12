@@ -73,20 +73,17 @@ h4 {
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.02em;
+    text-wrap: balance;
 }
 
 h1 {
     font-size: clamp(2.5rem, 8vw, 4.5rem);
-    word-wrap: break-word;
-    word-break: break-word;
     hyphens: auto;
 }
 
 h2 {
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
-    word-wrap: break-word;
-    word-break: break-word;
     hyphens: auto;
 }
 
@@ -183,7 +180,7 @@ nav .container {
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 0.5rem;
+    gap: 1rem;
     background: rgba(0, 0, 0, 0.05);
     padding: 0.4rem;
     border-radius: var(--radius-full);
@@ -298,6 +295,14 @@ nav.scrolled a {
 .nav-item-dropdown:hover>a {
     color: var(--color-primary) !important;
     background: var(--color-secondary);
+}
+
+/* Logical Groups Separators (Info Menu) */
+.dropdown-menu li:nth-child(3),
+.dropdown-menu li:nth-child(6) {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 0.25rem;
+    padding-top: 0.25rem;
 }
 
 .home-page nav:not(.scrolled) .dropdown-menu,
@@ -1316,4 +1321,36 @@ footer p {
 
 .footer-links {
     list-style: none;
+}
+
+/* Form Validation Animation */
+.shake-animation {
+    animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
 }

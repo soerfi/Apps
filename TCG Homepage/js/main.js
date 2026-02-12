@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFormValidation();
     initActiveNav();
     initDropdowns();
+    initTiltEffect();
 });
 
 /**
@@ -42,6 +43,11 @@ function initDropdowns() {
  * Sticky Navigation
  * Adds 'scrolled' class to nav and swaps logo version
  */
+/**
+ * Sticky Navigation
+ * Adds 'scrolled' class to nav and swaps logo version
+ * Optimized with requestAnimationFrame
+ */
 function initStickyNav() {
     const nav = document.getElementById('main-nav');
     const logoImg = nav?.querySelector('.logo img');
@@ -51,7 +57,9 @@ function initStickyNav() {
     const originalSrc = logoImg.getAttribute('src');
     const basePath = originalSrc.substring(0, originalSrc.lastIndexOf('/') + 1);
 
-    const handleScroll = () => {
+    let ticking = false;
+
+    const updateNav = () => {
         if (window.scrollY > 50) {
             nav.classList.add('scrolled');
             logoImg.src = `${basePath}tc_grueze_logo.svg`;
@@ -66,10 +74,18 @@ function initStickyNav() {
                 logoImg.src = `${basePath}tc_grueze_logo.svg`;
             }
         }
+        ticking = false;
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
+    const onScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(updateNav);
+            ticking = true;
+        }
+    };
+
+    window.addEventListener('scroll', onScroll);
+    updateNav(); // Initial check
 }
 
 /**
@@ -128,6 +144,7 @@ function initSmoothScrolling() {
 
 /**
  * Basic Form Validation
+ * Replaces alerts with inline feedback and animations
  */
 function initFormValidation() {
     const forms = document.querySelectorAll('form');
@@ -135,11 +152,31 @@ function initFormValidation() {
         form.addEventListener('submit', (e) => {
             const inputs = form.querySelectorAll('input[required], textarea[required]');
             let valid = true;
+            let firstInvalid = null;
+
+            // Remove existing error messages
+            form.querySelectorAll('.error-message').forEach(el => el.remove());
 
             inputs.forEach(input => {
                 if (!input.value.trim()) {
                     valid = false;
+                    if (!firstInvalid) firstInvalid = input;
+
                     input.style.borderColor = 'var(--color-accent)';
+                    input.classList.add('shake-animation');
+
+                    // Add simple error message below field
+                    const msg = document.createElement('span');
+                    msg.className = 'error-message';
+                    msg.style.color = 'var(--color-accent)';
+                    msg.style.fontSize = '0.8rem';
+                    msg.style.marginTop = '0.25rem';
+                    msg.style.display = 'block';
+                    msg.innerText = 'Dieses Feld ist erforderlich.';
+                    input.parentNode.appendChild(msg);
+
+                    // Remove shake class after animation
+                    setTimeout(() => input.classList.remove('shake-animation'), 500);
                 } else {
                     input.style.borderColor = '';
                 }
@@ -147,12 +184,11 @@ function initFormValidation() {
 
             if (!valid) {
                 e.preventDefault();
-                alert('Bitte füllen Sie alle erforderlichen Felder aus.');
+                if (firstInvalid) firstInvalid.focus();
             }
         });
     });
 }
-
 /**
  * Active Navigation Highlighting
  */
@@ -187,6 +223,48 @@ function toggleMobileMenu() {
         if (!menuInner.classList.contains('active')) {
             document.querySelectorAll('.nav-item-dropdown').forEach(d => d.classList.remove('active'));
         }
+    }
+}
+
+/**
+ * 3D Tilt Effect on Cards
+ * Adds a premium feel by tilting cards towards the mouse cursor
+ */
+function initTiltEffect() {
+    // Only on desktop
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    const cards = document.querySelectorAll('.card, .glass-card, .price-card, .event-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', handleHover);
+        card.addEventListener('mouseleave', resetTilt);
+
+        // Ensure 3D context
+        card.style.transformStyle = 'preserve-3d';
+        card.style.transform = 'perspective(1000px)';
+    });
+
+    function handleHover(e) {
+        const card = this;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Calculate rotation (max 5 degrees)
+        const xPct = x / rect.width;
+        const yPct = y / rect.height;
+
+        const xRot = (yPct - 0.5) * 10; // -5 to +5 deg
+        const yRot = (xPct - 0.5) * -10; // +5 to -5 deg
+
+        window.requestAnimationFrame(() => {
+            card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+    }
+
+    function resetTilt() {
+        this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
     }
 }
 
