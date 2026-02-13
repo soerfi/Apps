@@ -1,118 +1,147 @@
 /**
  * TC Grüze Website
- * Authentifizierungsskript für den Mitgliederbereich
+ * Authentication Script for Members Area
  * 
- * Hinweis: Dies ist eine einfache clientseitige Authentifizierung für Demonstrationszwecke.
- * In einer Produktionsumgebung sollte eine serverseitige Authentifizierung implementiert werden.
+ * Security Note:
+ * This client-side authentication uses SHA-256 hashing to hide the password from casual view.
+ * However, FOR TRUE SECURITY, files should be protected server-side (e.g. .htaccess or backend auth).
+ * Client-side checks can be bypassed by knowledgeable users.
  */
 
+// SHA-256 Hash of "1978"
+const CLUB_PASSWORD_HASH = '46635b56d3c7f0b7bb26adae2a1692debbfd145d4a0986a9137fe91e73e70360';
+
 document.addEventListener('DOMContentLoaded', function () {
-    // Initialisiere die Authentifizierungsfunktionalität
     initAuth();
 });
 
 /**
- * Initialisiere die Authentifizierungsfunktionalität
+ * Initialize Authentication
  */
 function initAuth() {
-    // Prüfe, ob wir auf der Login-Seite sind
+    // 1. Handle Login Form
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
+        // If already logged in, redirect to dashboard immediately
+        if (isLoggedIn()) {
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
         loginForm.addEventListener('submit', handleLogin);
+        // Do NOT clear session here to allow persistent login during session
     }
 
-    // Prüfe, ob wir auf einer geschützten Seite sind
+    // 2. Protect Members-Only Pages
     const membersOnlyContent = document.querySelector('.members-only');
     if (membersOnlyContent) {
-        // Überprüfe, ob der Benutzer eingeloggt ist
         if (!isLoggedIn()) {
-            // Wenn nicht eingeloggt, leite zur Login-Seite weiter
             redirectToLogin();
         }
     }
 
-    // Logout-Button-Funktionalität
+    // 3. Handle Logout
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', handleLogout);
     }
+
+    // 4. Intercept Download Links (UX Protection)
+    // Prevents accidental access to protected files if not logged in
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest('a');
+        if (link && link.href.includes('/downloads/') && !isLoggedIn()) {
+            // Prevent download and redirect to login
+            e.preventDefault();
+            alert("Bitte logge dich ein, um Dokumente herunterzuladen.");
+            redirectToLogin();
+        }
+    });
+
+    // 5. Update UI based on auth state
+    updateAuthUI();
 }
 
 /**
- * Behandelt den Login-Vorgang
- * @param {Event} e - Das Submit-Event des Formulars
+ * Update UI elements based on auth state
  */
-function handleLogin(e) {
-    e.preventDefault();
-
-    // Formularfelder abrufen
-    const passwordField = document.getElementById('password');
-    const usernameField = document.getElementById('username');
-
-    // Check if this is password-only login (members area) or username+password login
-    if (passwordField && !usernameField) {
-        // Password-only login for members area
-        const password = passwordField.value;
-
-        if (!password) {
-            showLoginError('Bitte geben Sie das Passwort ein.');
-            return;
-        }
-
-        // Check against club password
-        if (password === '1978') {
-            // Erfolgreiche Anmeldung
-            setLoggedIn(true);
-
-            // Weiterleitung zum Dashboard
-            window.location.href = 'dashboard.html';
+function updateAuthUI() {
+    const authLink = document.querySelector('.nav-auth-link'); // Helper if we add "Login/Logout" to nav
+    if (authLink) {
+        if (isLoggedIn()) {
+            authLink.textContent = 'Logout';
+            authLink.href = '#';
+            authLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleLogout();
+            });
         } else {
-            // Fehlgeschlagene Anmeldung
-            showLoginError('Ungültiges Passwort. Bitte versuchen Sie es erneut.');
-        }
-    } else {
-        // Username + password login (legacy/admin)
-        const username = usernameField ? usernameField.value : '';
-        const password = passwordField ? passwordField.value : '';
-
-        // Einfache Validierung
-        if (!username || !password) {
-            showLoginError('Bitte geben Sie Benutzername und Passwort ein.');
-            return;
-        }
-
-        // Demo-Anmeldedaten (in einer echten Anwendung würde dies serverseitig überprüft)
-        if (username === 'demo' && password === 'password') {
-            // Erfolgreiche Anmeldung
-            setLoggedIn(true);
-
-            // Weiterleitung zum Dashboard
-            window.location.href = 'dashboard.html';
-        } else {
-            // Fehlgeschlagene Anmeldung
-            showLoginError('Ungültiger Benutzername oder Passwort.');
+            authLink.textContent = 'Members';
+            authLink.href = '/pages/members/index.html';
         }
     }
 }
 
 /**
- * Behandelt den Logout-Vorgang
+ * Handle Login
+ */
+async function handleLogin(e) {
+    e.preventDefault();
+
+    const passwordField = document.getElementById('password');
+    if (!passwordField) return;
+
+    const password = passwordField.value;
+
+    if (!password) {
+        showLoginError('Bitte geben Sie das Passwort ein.');
+        return;
+    }
+
+    try {
+        // Verify Password Hash
+        const hash = await sha256(password);
+
+        if (hash === CLUB_PASSWORD_HASH) {
+            // Success
+            setLoggedIn(true);
+            window.location.href = 'dashboard.html';
+        } else {
+            // Failed
+            showLoginError('Ungültiges Passwort.');
+        }
+    } catch (error) {
+        console.error("Auth Error:", error);
+        showLoginError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+    }
+}
+
+/**
+ * Generate SHA-256 Hash
+ */
+async function sha256(message) {
+    // Encode as UTF-8
+    const msgBuffer = new TextEncoder().encode(message);
+    // Hash the message
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    // Convert ArrayBuffer to Hex String
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Handle Logout
  */
 function handleLogout() {
-    // Benutzer ausloggen
     setLoggedIn(false);
-
-    // Zur Startseite weiterleiten
     window.location.href = '../../index.html';
 }
 
 /**
- * Zeigt eine Fehlermeldung im Login-Formular an
- * @param {string} message - Die anzuzeigende Fehlermeldung
+ * Show Error Message
  */
 function showLoginError(message) {
     const errorElement = document.getElementById('login-error');
-
     if (errorElement) {
         errorElement.textContent = message;
         errorElement.style.display = 'block';
@@ -120,49 +149,36 @@ function showLoginError(message) {
 }
 
 /**
- * Überprüft, ob der Benutzer eingeloggt ist
- * @returns {boolean} - true, wenn der Benutzer eingeloggt ist, sonst false
+ * Check Login State
+ * Uses sessionStorage (cleared when browser closes) instead of localStorage for better security
  */
 function isLoggedIn() {
-    return localStorage.getItem('isLoggedIn') === 'true';
+    return sessionStorage.getItem('isLoggedIn') === 'true';
 }
 
 /**
- * Setzt den Login-Status des Benutzers
- * @param {boolean} status - Der Login-Status (true = eingeloggt, false = ausgeloggt)
+ * Set Login State
  */
 function setLoggedIn(status) {
     if (status) {
-        localStorage.setItem('isLoggedIn', 'true');
+        sessionStorage.setItem('isLoggedIn', 'true');
     } else {
-        localStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('isLoggedIn');
     }
 }
 
 /**
- * Leitet zur Login-Seite weiter
+ * Redirect to Login
  */
 function redirectToLogin() {
-    // Aktuelle URL speichern, um nach dem Login zurückzukehren
-    const currentPath = window.location.pathname;
-    localStorage.setItem('tcgrueze_redirect', currentPath);
-
-    // Zur Login-Seite weiterleiten
-    window.location.href = '/pages/members/index.html';
-}
-
-/**
- * Leitet zur ursprünglichen Seite zurück (nach erfolgreichem Login)
- */
-function redirectToOriginal() {
-    const redirectPath = localStorage.getItem('tcgrueze_redirect');
-
-    if (redirectPath) {
-        localStorage.removeItem('tcgrueze_redirect');
-        window.location.href = redirectPath;
+    sessionStorage.setItem('tcgrueze_redirect', window.location.pathname);
+    // Determine path to login page based on current location
+    // Simply going to /pages/members/index.html works if absolute path is supported
+    // Otherwise, we can try relative
+    if (window.location.pathname.includes('/pages/members/')) {
+        window.location.href = 'index.html';
     } else {
-        // Standardmässig zum Dashboard weiterleiten
-        window.location.href = '/pages/members/dashboard.html';
+        window.location.href = '../../pages/members/index.html';
     }
 }
 

@@ -414,7 +414,8 @@ nav.scrolled a {
     background: none;
     border: none;
     cursor: pointer;
-    z-index: 1001;
+    z-index: 10001;
+    /* Ensure it is above the nav-inner (9999) */
     padding: 0;
 }
 
@@ -436,6 +437,10 @@ nav.scrolled a {
 
 nav.scrolled .mobile-nav-toggle span {
     background-color: var(--color-primary);
+}
+
+.mobile-nav-toggle.active span {
+    background-color: var(--color-primary) !important;
 }
 
 .mobile-nav-toggle.active span:nth-child(1) {
@@ -461,8 +466,10 @@ nav.scrolled .mobile-nav-toggle span {
         right: -100%;
         width: 80%;
         height: 100vh;
-        background: #ffffff !important;
-        /* Force white background */
+        /* Glassmorphism background for mobile menu */
+        background: rgba(255, 255, 255, 0.45) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
         flex-direction: column;
         justify-content: flex-start;
         padding: 8rem 2.5rem;
@@ -492,10 +499,12 @@ nav.scrolled .mobile-nav-toggle span {
 
     .nav-menu {
         flex-direction: column;
-        background: none;
-        backdrop-filter: none;
+        background: none !important;
+        backdrop-filter: none !important;
         width: 100%;
         gap: 1rem;
+        padding: 0 !important;
+        border-radius: 0 !important;
     }
 
     .nav-inner .nav-menu a {

@@ -147,6 +147,12 @@ function initStickyNav() {
     let ticking = false;
 
     const updateNav = () => {
+        // Prevent nav changes while mobile menu is open to avoid visual jumping/transparency shifts
+        if (document.body.classList.contains('menu-open')) {
+            ticking = false;
+            return;
+        }
+
         if (window.scrollY > 50) {
             nav.classList.add('scrolled');
             logoImg.src = `${basePath}tc_grueze_logo.svg`;

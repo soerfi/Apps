@@ -73,12 +73,24 @@
             font-weight: 700;
             color: var(--color-primary);
             margin-bottom: 0.5rem;
+            text-decoration: underline;
+            /* Add underline */
         }
 
         .tile-description {
             font-size: 0.9rem;
             color: #666;
             line-height: 1.5;
+            text-decoration: none !important;
+            /* Ensure no underline */
+        }
+
+        .member-tile {
+            text-decoration: none !important;
+            display: block;
+            /* Ensure it behaves like a block */
+            color: inherit;
+            /* Inherit color to avoid default blue link color */
         }
 
         @media (max-width: 768px) {
@@ -120,57 +132,8 @@
 
 <body class="sub-page">
     <!-- Navigation -->
-    <nav id="main-nav">
-        <div class="container">
-            <a href="../../index.html" class="logo">
-                <img src="../../images/icons/tc_grueze_logo-white.svg" alt="TC Grüze Logo" style="height: 50px;">
-            </a>
-            <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="nav-inner">
-                                                                <ul class="nav-menu">
-                    <li><a href="../../index.html">Home</a></li>
-                    <li class="nav-item-dropdown">
-                        <a href="../../pages/club/index.html">Club</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="../../pages/club/index.html">Über uns</a></li>
-                            <li><a href="../../pages/club/jahresprogramm.html">Jahresprogramm</a></li>
-                            <li><a href="../../pages/club/geschichte.html">Geschichte</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="../../pages/mitgliedschaft/index.html">Mitgliedschaft</a></li>
-                    <li class="nav-item-dropdown">
-                        <a href="../../pages/sport/index.html">Sport</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="../../pages/sport/index.html">Tennis</a></li>
-                            <li><a href="../../pages/sport/pickleball.html">Pickleball</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="../../pages/events/index.html">Events</a></li>
-                    <li class="nav-item-dropdown">
-                        <a href="../../pages/info/index.html">Info</a>
-                        <ul class="dropdown-menu">
-                            <li><a href="../../pages/info/index.html">Info</a></li>
-                            <li><a href="../../pages/kontakt/index.html">Kontakt</a></li>
-                            <li><a href="../../pages/club/jahresprogramm.html">Jahresprogramm</a></li>
-                            <li><a href="../../pages/info/spielzeiten.html">Spielzeiten</a></li>
-                            <li><a href="../../pages/info/reglement.html">Reglement</a></li>
-                            <li><a href="../../pages/info/sponsoren.html">Sponsoren</a></li>
-                            <li><a href="../../pages/impressum/index.html">Impressum</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="../../pages/members/index.html">Members</a></li>
-                </ul>
-                <div class="nav-cta mobile-hide">
-                    <a href="https://www.eversports.ch/sb/tennis-und-squash-grueze-ag-1" class="btn-join external-link"
-                        target="_blank" rel="noopener noreferrer">Platz buchen</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <div id="main-nav-placeholder" data-root="../../"></div>
+    <script src="../../js/navigation.js"></script>
 
     <main class="members-only members-dashboard">
         <!-- Dashboard Hero -->
@@ -180,6 +143,9 @@
                     <h1>Mitglieder<span class="text-gradient">bereich</span></h1>
                     <p>Willkommen zurück. Hier findest du alle exklusiven Ressourcen und Informationen für unsere
                         Clubmitglieder.</p>
+                    <button id="logout-button" class="btn btn-primary" style="margin-top: 1.5rem;">
+                        Abmelden
+                    </button>
                 </div>
             </div>
         </header>
@@ -190,7 +156,7 @@
                 <div class="tiles-grid">
                     <!-- Platzreservation -->
                     <a href="https://www.eversports.ch/sb/tennis-und-squash-grueze-ag-1" target="_blank"
-                        rel="noopener noreferrer" class="member-tile">
+                        rel="noopener noreferrer" class="member-tile" style="text-decoration: none !important;">
                         <div class="tile-icon">
                             <img src="../../images/icons/platzreservation.webp" alt="Platzreservation">
                         </div>
@@ -208,7 +174,7 @@
                     </a>
 
                     <!-- Mitgliederliste -->
-                    <a href="../../downloads/Mitgliederliste.pdf" target="_blank" class="member-tile">
+                    <a href="../../downloads/Mitgliederliste_2026_Secured_X7.pdf" target="_blank" class="member-tile">
                         <div class="tile-icon">
                             <img src="../../images/icons/mitgliederliste.webp" alt="Mitgliederliste">
                         </div>
