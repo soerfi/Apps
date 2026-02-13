@@ -55,6 +55,7 @@
             </div>
         </div>
     </nav>
+    <div class="mobile-nav-overlay" onclick="toggleMobileMenu()"></div>
     `;
 
     placeholder.outerHTML = navHTML;

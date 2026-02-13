@@ -490,6 +490,7 @@ nav.scrolled .mobile-nav-toggle span {
         right: -100%;
         width: 80%;
         height: 100vh;
+
         /* Glassmorphism background for mobile menu */
         background: rgba(255, 255, 255, 0.45) !important;
         backdrop-filter: blur(20px) !important;
@@ -500,6 +501,7 @@ nav.scrolled .mobile-nav-toggle span {
         transition: var(--transition);
         box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
         z-index: 9999;
+
         /* Ensure it is on top */
         gap: 2rem;
         overflow-y: auto;
@@ -508,17 +510,8 @@ nav.scrolled .mobile-nav-toggle span {
 
     .nav-inner.active {
         right: 0;
-    }
-
-    /* Ensure flex direction is persistent */
-    .nav-inner .nav-menu {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .nav-inner.active {
-        right: 0;
+        /* Delay entrance slightly to allow main nav to fade out first */
+        transition-delay: 0.1s;
     }
 
     .nav-menu {
@@ -555,6 +548,55 @@ nav.scrolled .mobile-nav-toggle span {
 
     .mobile-hide {
         display: none !important;
+    }
+
+    /* FIX: Hide main navbar background and logo when mobile menu is open
+       This prevents the "double blur" effect and visual clutter. */
+    body.menu-open nav.scrolled {
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
+        border-bottom-color: transparent !important;
+        transition: all 0.2s ease;
+    }
+
+    body.menu-open nav .logo {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        pointer-events: none;
+    }
+
+    /* Mobile Overlay Styles */
+    .mobile-nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+        /* Below nav (1000) */
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    body.menu-open .mobile-nav-overlay {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    /* Allow clicking through the transparent nav header to hit the overlay */
+    body.menu-open nav {
+        pointer-events: none;
+    }
+
+    /* Re-enable clicks for interactive elements inside nav */
+    body.menu-open .nav-inner,
+    body.menu-open .mobile-nav-toggle {
+        pointer-events: auto;
     }
 }
 
@@ -1475,5 +1517,30 @@ footer p {
     /* Fix padding on containers */
     .container {
         padding: 0 1.5rem;
+    }
+
+    /* =======================================================
+   FIX: Mobile Nav Blur Conflict
+   Verhindert doppelten Blur/Hintergrund, wenn gescrollt
+   ======================================================= */
+
+    /* Wenn das Menü offen ist (body hat 'menu-open'), 
+   entfernen wir das Styling der 'scrolled' Navbar */
+    body.menu-open nav.scrolled {
+        background: transparent !important;
+        /* Hintergrund entfernen */
+        backdrop-filter: none !important;
+        /* Blur entfernen */
+        box-shadow: none !important;
+        /* Schatten entfernen */
+        border-bottom: none !important;
+        /* Rand entfernen */
+    }
+
+    /* Optional: Stellt sicher, dass das Mobile Menü den Platz einnimmt */
+    body.menu-open .nav-inner {
+        background: rgba(245, 245, 247, 0.75) !important;
+        /* Etwas deckender für bessere Lesbarkeit */
+        backdrop-filter: blur(20px) saturate(180%) !important;
     }
 }
