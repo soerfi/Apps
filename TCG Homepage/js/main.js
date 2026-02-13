@@ -12,67 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initActiveNav();
     initDropdowns();
     initHeroParallax();
-    initTiltEffect();
 });
 
 // ... [Keep existing code until initTiltEffect] ...
 
-/**
- * 3D Tilt Effect on Cards
- * Adds a premium feel by tilting cards towards the mouse cursor
- * Adjusted for stability (less wobble)
- */
-function initTiltEffect() {
-    // Only on desktop
-    if (window.matchMedia('(hover: none)').matches) return;
-
-    const cards = document.querySelectorAll('.card, .glass-card, .price-card, .event-card');
-
-    cards.forEach(card => {
-        card.addEventListener('mousemove', handleHover);
-        card.addEventListener('mouseleave', resetTilt);
-
-        // Ensure 3D context
-        card.style.transformStyle = 'preserve-3d';
-        // Set initial transform based on card type
-        if (card.classList.contains('featured')) {
-            card.style.transform = 'perspective(1000px) scale(1.05)';
-        } else {
-            card.style.transform = 'perspective(1000px) scale(1)';
-        }
-    });
-
-    function handleHover(e) {
-        const card = this;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Calculate rotation 
-        const xPct = x / rect.width;
-        const yPct = y / rect.height;
-
-        // Reduced sensitivity to 3deg for stability
-        const xRot = (yPct - 0.5) * 3;
-        const yRot = (xPct - 0.5) * -3;
-
-        const isFeatured = card.classList.contains('featured');
-        const scale = isFeatured ? 1.08 : 1.02;
-        const lift = isFeatured ? -10 : -8;
-
-        window.requestAnimationFrame(() => {
-            card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(${scale}, ${scale}, ${scale}) translateY(${lift}px)`;
-        });
-    }
-
-    function resetTilt() {
-        if (this.classList.contains('featured')) {
-            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1.05, 1.05, 1.05) translateY(0)';
-        } else {
-            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1) translateY(0)';
-        }
-    }
-}
 
 /**
  * Hero Parallax Effect
@@ -319,62 +262,6 @@ function toggleMobileMenu() {
     }
 }
 
-/**
- * 3D Tilt Effect on Cards
- * Adds a premium feel by tilting cards towards the mouse cursor
- * Adjusted for stability (less wobble)
- */
-function initTiltEffect() {
-    // Only on desktop
-    if (window.matchMedia('(hover: none)').matches) return;
-
-    const cards = document.querySelectorAll('.card, .glass-card, .price-card, .event-card');
-
-    cards.forEach(card => {
-        card.addEventListener('mousemove', handleHover);
-        card.addEventListener('mouseleave', resetTilt);
-
-        // Ensure 3D context
-        card.style.transformStyle = 'preserve-3d';
-        // Set initial transform based on card type
-        if (card.classList.contains('featured')) {
-            card.style.transform = 'perspective(1000px) scale(1.05)';
-        } else {
-            card.style.transform = 'perspective(1000px) scale(1)';
-        }
-    });
-
-    function handleHover(e) {
-        const card = this;
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Calculate rotation 
-        const xPct = x / rect.width;
-        const yPct = y / rect.height;
-
-        // Reduced sensitivity to 3deg for stability
-        const xRot = (yPct - 0.5) * 3;
-        const yRot = (xPct - 0.5) * -3;
-
-        const isFeatured = card.classList.contains('featured');
-        const scale = isFeatured ? 1.08 : 1.02;
-        const lift = isFeatured ? -10 : -8;
-
-        window.requestAnimationFrame(() => {
-            card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(${scale}, ${scale}, ${scale}) translateY(${lift}px)`;
-        });
-    }
-
-    function resetTilt() {
-        if (this.classList.contains('featured')) {
-            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1.05, 1.05, 1.05) translateY(0)';
-        } else {
-            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1) translateY(0)';
-        }
-    }
-}
 
 /**
  * Hero Parallax Effect
