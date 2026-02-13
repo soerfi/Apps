@@ -40,7 +40,6 @@
                         <ul class="dropdown-menu">
                             <li><a href="${root}pages/info/index.html">Info</a></li>
                             <li><a href="${root}pages/kontakt/index.html">Kontakt</a></li>
-                            <li><a href="${root}pages/club/jahresprogramm.html">Jahresprogramm</a></li>
                             <li><a href="${root}pages/info/spielzeiten.html">Spielzeiten</a></li>
                             <li><a href="${root}pages/info/reglement.html">Reglement</a></li>
                             <li><a href="${root}pages/info/sponsoren.html">Sponsoren</a></li>

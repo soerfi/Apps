@@ -146,6 +146,30 @@ section:nth-child(even) {
     background-color: var(--color-bg-subtle);
 }
 
+/* MOVED CRITICAL STYLES TO TOP */
+section.section-dark {
+    background-color: var(--color-bg-dark);
+    color: #fff;
+}
+
+.section-dark p {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.text-secondary {
+    color: var(--color-secondary);
+}
+
+.text-muted-dark {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.pickleball-logo {
+    width: 60%;
+    max-width: 500px;
+    height: auto;
+}
+
 /* Navigation */
 nav {
     position: fixed;
@@ -1207,7 +1231,7 @@ footer p {
         transform: translateX(calc(-280px * 3));
     }
 
-    /* (width 200 + gap 80) * count 3 */
+
 }
 
 /* =========================================
@@ -1242,29 +1266,9 @@ footer p {
 }
 
 /* Dark Section Utilities */
-section.section-dark {
-    background-color: var(--color-bg-dark);
-    color: #fff;
-}
 
-.section-dark p {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.text-secondary {
-    color: var(--color-secondary);
-}
-
-.text-muted-dark {
-    color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* Pickleball Feature List */
-.pickleball-logo {
-    width: 60%;
-    max-width: 500px;
-    height: auto;
-}
+/* Dark Section Utilities - MOVED TO TOP */
+/* Pickleball Feature List - MOVED TO TOP */
 
 .feature-list {
     list-style: none;
