@@ -461,13 +461,15 @@ nav.scrolled .mobile-nav-toggle span {
         right: -100%;
         width: 80%;
         height: 100vh;
-        background: var(--color-bg);
+        background: #ffffff !important;
+        /* Force white background */
         flex-direction: column;
         justify-content: flex-start;
         padding: 8rem 2.5rem;
         transition: var(--transition);
         box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
+        z-index: 9999;
+        /* Ensure it is on top */
         gap: 2rem;
         overflow-y: auto;
         /* Allow scrolling if menu is long */
@@ -496,11 +498,12 @@ nav.scrolled .mobile-nav-toggle span {
         gap: 1rem;
     }
 
-    .nav-menu a {
+    .nav-inner .nav-menu a {
         font-size: 1.25rem;
         width: 100%;
         text-align: left;
-        color: var(--color-text) !important;
+        /* Force dark text color to override desktop 'white text on transparent nav' rules */
+        color: #0A0F0A !important;
         text-shadow: none !important;
         padding: 1rem 1.5rem;
         /* Add padding to prevent edge touching */
@@ -599,6 +602,25 @@ nav.scrolled .mobile-nav-toggle span {
 .btn-secondary:hover {
     background: var(--color-primary);
     color: var(--color-bg);
+}
+
+.hero-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .hero-btns {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-btns .btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .external-link::after {
@@ -701,7 +723,7 @@ a.card:hover,
 .price-card:hover,
 .member-tile:active,
 .member-tile:hover {
-    transform: translateY(-8px) !important;
+    transform: translateY(-8px);
     box-shadow: var(--shadow-lg);
     border-color: var(--color-secondary);
 }
@@ -713,7 +735,7 @@ a.card:hover,
 }
 
 .price-card.featured:hover {
-    transform: scale(1.08) translateY(-10px) !important;
+    transform: scale(1.08) translateY(-10px);
 }
 
 .event-card {
@@ -1211,7 +1233,7 @@ footer p {
 }
 
 /* Dark Section Utilities */
-.section-dark {
+section.section-dark {
     background-color: var(--color-bg-dark);
     color: #fff;
 }
@@ -1352,5 +1374,93 @@ footer p {
     40%,
     60% {
         transform: translate3d(4px, 0, 0);
+    }
+}
+
+/* =========================================
+   Responsive & Utilities
+   ========================================= */
+
+.h-100 {
+    height: 100%;
+}
+
+@media (max-width: 900px) {
+    section {
+        padding: 4rem 0;
+    }
+
+    .grid-2,
+    .grid-3 {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .hero {
+        min-height: 500px;
+    }
+
+    /* Ensure images in grids are ordered correctly if needed */
+    .growth-section .grid-2 {
+        flex-direction: column-reverse;
+        /* Text first usually on mobile, or user specific? */
+        /* Currently in HTML it handles order manually. I'll rely on source order or specific overrides. */
+    }
+
+    /* Fix image revealing container */
+    .image-reveal {
+        width: 100%;
+        min-height: 250px;
+    }
+
+    /* Program Table Mobile */
+    .program-table,
+    .program-table tbody,
+    .program-table tr,
+    .program-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .program-table thead {
+        display: none;
+    }
+
+    .program-table tr {
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .program-table td {
+        padding: 0.5rem 1.5rem;
+        border: none;
+    }
+
+    .program-table td:first-child {
+        padding-top: 1.5rem;
+    }
+
+    .program-table td:last-child {
+        padding-bottom: 1.5rem;
+    }
+
+    .date-cell {
+        width: 100%;
+        margin-top: 0.5rem;
+        color: var(--color-text);
+        /* Better readability on mobile than primary color sometimes */
+    }
+
+    /* Force images to fill height on mobile */
+    .image-reveal img {
+        height: 100% !important;
+        object-fit: cover !important;
+        min-height: 250px;
+    }
+
+    /* Fix padding on containers */
+    .container {
+        padding: 0 1.5rem;
     }
 }

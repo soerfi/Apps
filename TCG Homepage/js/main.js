@@ -11,8 +11,95 @@ document.addEventListener('DOMContentLoaded', () => {
     initFormValidation();
     initActiveNav();
     initDropdowns();
+    initHeroParallax();
     initTiltEffect();
 });
+
+// ... [Keep existing code until initTiltEffect] ...
+
+/**
+ * 3D Tilt Effect on Cards
+ * Adds a premium feel by tilting cards towards the mouse cursor
+ * Adjusted for stability (less wobble)
+ */
+function initTiltEffect() {
+    // Only on desktop
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    const cards = document.querySelectorAll('.card, .glass-card, .price-card, .event-card');
+
+    cards.forEach(card => {
+        card.addEventListener('mousemove', handleHover);
+        card.addEventListener('mouseleave', resetTilt);
+
+        // Ensure 3D context
+        card.style.transformStyle = 'preserve-3d';
+        // Set initial transform based on card type
+        if (card.classList.contains('featured')) {
+            card.style.transform = 'perspective(1000px) scale(1.05)';
+        } else {
+            card.style.transform = 'perspective(1000px) scale(1)';
+        }
+    });
+
+    function handleHover(e) {
+        const card = this;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Calculate rotation 
+        const xPct = x / rect.width;
+        const yPct = y / rect.height;
+
+        // Reduced sensitivity to 3deg for stability
+        const xRot = (yPct - 0.5) * 3;
+        const yRot = (xPct - 0.5) * -3;
+
+        const isFeatured = card.classList.contains('featured');
+        const scale = isFeatured ? 1.08 : 1.02;
+        const lift = isFeatured ? -10 : -8;
+
+        window.requestAnimationFrame(() => {
+            card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(${scale}, ${scale}, ${scale}) translateY(${lift}px)`;
+        });
+    }
+
+    function resetTilt() {
+        if (this.classList.contains('featured')) {
+            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1.05, 1.05, 1.05) translateY(0)';
+        } else {
+            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1) translateY(0)';
+        }
+    }
+}
+
+/**
+ * Hero Parallax Effect
+ * Moves background image strictly on Y-axis
+ */
+function initHeroParallax() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        if (scrolled > hero.offsetHeight) return;
+
+        // Move background down at 40% of scroll speed
+        // Assumes background-position-x is handled by CSS (e.g. center or 75%)
+        // We only touch the Y component. Center is usually 50%.
+        // We add pixels to move it.
+        const yPos = 50 + (scrolled * 0.05); // move percentage slightly
+
+        // Since original CSS has `background-position: 75% center`, we need to preserve X
+        // We'll read the computed style for X if we want to be safe, or just hardcode if we know it.
+        // The CSS has `background-position: 75% center;`.
+        // Let's modify only the Y.
+
+        hero.style.backgroundPosition = `75% calc(50% + ${scrolled * 0.4}px)`;
+    });
+}
 
 /**
  * Dropdown Menu Interactivity (mainly for mobile)
@@ -229,6 +316,7 @@ function toggleMobileMenu() {
 /**
  * 3D Tilt Effect on Cards
  * Adds a premium feel by tilting cards towards the mouse cursor
+ * Adjusted for stability (less wobble)
  */
 function initTiltEffect() {
     // Only on desktop
@@ -242,7 +330,12 @@ function initTiltEffect() {
 
         // Ensure 3D context
         card.style.transformStyle = 'preserve-3d';
-        card.style.transform = 'perspective(1000px)';
+        // Set initial transform based on card type
+        if (card.classList.contains('featured')) {
+            card.style.transform = 'perspective(1000px) scale(1.05)';
+        } else {
+            card.style.transform = 'perspective(1000px) scale(1)';
+        }
     });
 
     function handleHover(e) {
@@ -251,20 +344,65 @@ function initTiltEffect() {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        // Calculate rotation (max 5 degrees)
+        // Calculate rotation 
         const xPct = x / rect.width;
         const yPct = y / rect.height;
 
-        const xRot = (yPct - 0.5) * 10; // -5 to +5 deg
-        const yRot = (xPct - 0.5) * -10; // +5 to -5 deg
+        // Reduced sensitivity to 3deg for stability
+        const xRot = (yPct - 0.5) * 3;
+        const yRot = (xPct - 0.5) * -3;
+
+        const isFeatured = card.classList.contains('featured');
+        const scale = isFeatured ? 1.08 : 1.02;
+        const lift = isFeatured ? -10 : -8;
 
         window.requestAnimationFrame(() => {
-            card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(1.02, 1.02, 1.02)`;
+            card.style.transform = `perspective(1000px) rotateX(${xRot}deg) rotateY(${yRot}deg) scale3d(${scale}, ${scale}, ${scale}) translateY(${lift}px)`;
         });
     }
 
     function resetTilt() {
-        this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        if (this.classList.contains('featured')) {
+            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1.05, 1.05, 1.05) translateY(0)';
+        } else {
+            this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1) translateY(0)';
+        }
     }
+}
+
+/**
+ * Hero Parallax Effect
+ * Moves background image strictly on Y-axis
+ */
+/**
+ * Hero Parallax Effect
+ * Moves background image strictly on Y-axis
+ * Optimized with requestAnimationFrame for smooth performance
+ */
+function initHeroParallax() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    let ticking = false;
+
+    const updateParallax = () => {
+        const scrolled = window.scrollY;
+
+        if (scrolled <= hero.offsetHeight) {
+            // Move background down at 40% of scroll speed
+            // Keeping X at 75% (from CSS)
+            hero.style.backgroundPosition = `75% calc(50% + ${scrolled * 0.4}px)`;
+        }
+        ticking = false;
+    };
+
+    const onScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(updateParallax);
+            ticking = true;
+        }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
 }
 
