@@ -3,10 +3,14 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>SOERFI.COM | Photographer</title>
     <meta name="description"
         content="Portfolio of SOERFI - Skateboarding, Portrait, and Impressions Photography. Minimalist and dark aesthetic.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
 
     <!-- Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +27,7 @@
     <!-- Loader -->
     <div id="loader" class="fixed inset-0 z-[100] bg-black flex items-center justify-center">
         <div
-            class="logo-loader text-3xl md:text-5xl font-black tracking-tighter opacity-0 scale-90 blur-md transition-all flex items-center">
+            class="logo-loader font-black tracking-tighter opacity-0 scale-90 blur-md transition-all flex items-center">
             <span class="w-2 h-2 bg-white mr-1 rounded-full"></span>
             SOERFI<span class="text-gray-500">.COM</span>
         </div>
@@ -33,7 +37,7 @@
     <header
         class="fixed top-0 left-0 w-full z-50 p-8 flex justify-between items-center mix-blend-difference pointer-events-none">
         <div class="logo pointer-events-auto">
-            <a href="/" class="text-3xl font-black tracking-tighter flex items-center group">
+            <a href="/" class="font-black tracking-tighter flex items-center group">
                 <span
                     class="logo-dot w-2 h-2 bg-white mr-1 rounded-full group-hover:scale-150 transition-all duration-300"></span>
                 SOERFI<span class="text-gray-500">.COM</span>
@@ -42,10 +46,11 @@
     </header>
 
     <!-- Landing Page (Typographic Menu) -->
-    <main id="app" class="relative w-full h-screen overflow-hidden flex items-center justify-center">
+    <main id="app" class="relative w-full h-[100dvh] overflow-hidden flex items-center justify-center">
 
         <!-- Category Landing -->
-        <div id="landing-screen" class="container mx-auto px-8 z-30 transition-all duration-1000">
+        <div id="landing-screen"
+            class="container mx-auto px-8 z-30 transition-all duration-1000 overflow-y-auto max-h-[85vh] py-10 scrollbar-hide">
             <ul class="nav-links flex flex-col gap-4 md:gap-8">
                 <!-- Links will be injected here via main.js -->
             </ul>
@@ -60,7 +65,7 @@
             <div class="flex justify-between items-end">
                 <div class="image-info">
                     <p id="current-category" class="text-xs uppercase tracking-widest text-gray-400 mb-1"></p>
-                    <h2 id="current-title" class="text-2xl font-bold"></h2>
+                    <h2 id="current-title" class="font-bold"></h2>
                 </div>
                 <div class="gallery-controls flex items-center gap-6 pointer-events-auto">
                     <button id="slideshow-btn" class="slideshow-btn p-2 text-gray-400 hover:text-white transition-all"

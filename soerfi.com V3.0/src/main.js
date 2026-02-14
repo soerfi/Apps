@@ -9,8 +9,14 @@ class Portfolio {
     this.images = [];
     this.isSlideshowActive = false;
     this.slideshowInterval = null;
+    this.touchStartX = 0;
+    this.touchEndX = 0;
+    this.touchStartY = 0;
+    this.touchEndY = 0;
+    this.currentTimeline = null;
 
     this.elements = {
+      app: document.getElementById('app'),
       loader: document.getElementById('loader'),
       loaderLogo: document.querySelector('.logo-loader'),
       landingScreen: document.getElementById('landing-screen'),
@@ -53,14 +59,14 @@ class Portfolio {
         html += `
                 <li class="nav-link-item">
                     <a href="#" data-type="about" class="nav-link-anchor group block">
-                        <span class="nav-link-title text-5xl md:text-8xl text-white hover:text-gray-400 transition-colors uppercase">${cat.label}</span>
+                        <span class="nav-link-title text-4xl md:text-8xl text-white hover:text-gray-400 transition-colors uppercase">${cat.label}</span>
                     </a>
                 </li>`;
       } else {
         html += `
                 <li class="nav-link-item mb-4 md:mb-8">
-                    <div class="nav-link-title text-5xl md:text-8xl text-white cursor-default uppercase">${cat.label}</div>
-                    <div class="flex gap-6 mt-2">
+                    <div class="nav-link-title text-4xl md:text-8xl text-white cursor-default uppercase">${cat.label}</div>
+                    <div class="subcategory-container">
                         ${cat.subcategories.map(sub => `
                             <a href="#" data-id="${sub.id}" class="category-link text-xs uppercase tracking-[0.3em] text-gray-500 hover:text-white transition-all duration-300 font-medium">${sub.label}</a>
                         `).join('')}
@@ -109,9 +115,75 @@ class Portfolio {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight') { this.stopSlideshow(); this.nextImage(); }
       if (e.key === 'ArrowLeft') { this.stopSlideshow(); this.prevImage(); }
-      if (e.key === 'Escape') this.showLanding();
+      if (e.key === 'Escape') {
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(err => console.log(err));
+        }
+        this.showLanding();
+      }
       if (e.key === ' ') { e.preventDefault(); this.toggleSlideshow(); }
     });
+
+    // Touch events for swiping
+    this.elements.galleryContainer.addEventListener('touchstart', (e) => {
+      this.touchStartX = e.changedTouches[0].screenX;
+      this.touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    this.elements.galleryContainer.addEventListener('touchend', (e) => {
+      this.touchEndX = e.changedTouches[0].screenX;
+      this.touchEndY = e.changedTouches[0].screenY;
+      this.handleSwipe();
+    }, { passive: true });
+
+    // Handle orientation change for auto-fullscreen (like YouTube)
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        if (this.currentCategory && (window.orientation === 90 || window.orientation === -90)) {
+          this.enterFullscreen();
+        }
+      }, 300);
+    });
+
+    // Tap to navigate
+    this.elements.galleryContainer.addEventListener('click', (e) => {
+      // Only handle if not a swipe (threshold check)
+      const diffX = Math.abs(this.touchStartX - this.touchEndX);
+      if (diffX < 10) {
+        const width = window.innerWidth;
+        const clickX = e.clientX;
+
+        if (clickX < width / 2) {
+          this.stopSlideshow();
+          this.prevImage();
+        } else {
+          this.stopSlideshow();
+          this.nextImage();
+        }
+      }
+    });
+  }
+
+  handleSwipe() {
+    const swipeThreshold = 50;
+    const diffX = this.touchStartX - this.touchEndX;
+    const diffY = this.touchStartY - this.touchEndY;
+
+    // Detect vertical swipe down to go back to menu
+    if (Math.abs(diffY) > Math.abs(diffX) && diffY < -swipeThreshold) {
+      this.showLanding();
+      return;
+    }
+
+    // Only allow sideways swiping
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
+      this.stopSlideshow();
+      if (diffX > 0) {
+        this.nextImage('swipe-right');
+      } else {
+        this.prevImage('swipe-left');
+      }
+    }
   }
 
   initialAnimation() {
@@ -166,10 +238,41 @@ class Portfolio {
     this.renderGallery();
     this.updateGalleryUI();
 
+    // Automatic Fullscreen on Mobile
+    if (window.innerWidth < 1024) {
+      this.enterFullscreen();
+    }
+
     const tl = gsap.timeline();
     tl.to(this.elements.landingScreen, { opacity: 0, y: -20, duration: 0.5, pointerEvents: 'none', ease: "power2.in" })
       .to(this.elements.galleryContainer, { opacity: 1, duration: 0.7, pointerEvents: 'all' }, "-=0.2")
       .to(this.elements.galleryUI, { opacity: 1, duration: 0.7, pointerEvents: 'all' }, "-=0.4");
+  }
+
+  toggleFullscreen() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      this.enterFullscreen();
+    } else {
+      this.exitFullscreen();
+    }
+  }
+
+  enterFullscreen() {
+    const docEl = document.documentElement;
+    const requestMethod = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+
+    if (requestMethod) {
+      requestMethod.call(docEl).catch(err => {
+        console.warn(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    }
+  }
+
+  exitFullscreen() {
+    const exitMethod = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exitMethod) {
+      exitMethod.call(document).catch(err => console.log(err));
+    }
   }
 
   renderGallery() {
@@ -190,72 +293,104 @@ class Portfolio {
     });
   }
 
-  nextImage() {
-    if (this.isAnimating || this.images.length <= 1) return;
-    this.changeImage((this.currentImageIndex + 1) % this.images.length);
+  nextImage(type = 'fade') {
+    if (this.images.length <= 1) return;
+    const nextIdx = (this.currentImageIndex + 1) % this.images.length;
+    this.changeImage(nextIdx, type);
   }
 
-  prevImage() {
-    if (this.isAnimating || this.images.length <= 1) return;
-    this.changeImage((this.currentImageIndex - 1 + this.images.length) % this.images.length);
+  prevImage(type = 'fade') {
+    if (this.images.length <= 1) return;
+    const prevIdx = (this.currentImageIndex - 1 + this.images.length) % this.images.length;
+    this.changeImage(prevIdx, type);
   }
 
-  changeImage(newIndex) {
-    if (this.isAnimating) return;
-    this.isAnimating = true;
+  changeImage(newIndex, type = 'fade') {
+    if (this.currentImageIndex === newIndex && this.isAnimating) return;
 
     const slides = this.elements.galleryContainer.querySelectorAll('.gallery-slide');
-    const currentSlide = slides[this.currentImageIndex];
+    const oldIndex = this.currentImageIndex;
+
+    if (this.currentTimeline) this.currentTimeline.kill();
+
+    this.currentImageIndex = newIndex;
+    this.updateGalleryUI();
+
+    this.isAnimating = true;
+    const isMobile = window.innerWidth < 768;
+    const duration = isMobile ? (type.includes('swipe') ? 0.5 : 0.3) : 1.2;
+
+    const currentSlide = slides[oldIndex];
     const nextSlide = slides[newIndex];
 
-    // Prepare next slide (hidden but ready)
-    gsap.set(nextSlide, { opacity: 0, filter: 'blur(30px)', scale: 1.1, zIndex: 10 });
-    gsap.set(currentSlide, { zIndex: 5 });
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        currentSlide.classList.remove('active');
-        nextSlide.classList.add('active');
-        this.isAnimating = false;
+    slides.forEach((slide, idx) => {
+      if (idx !== oldIndex && idx !== newIndex) {
+        gsap.set(slide, { opacity: 0, zIndex: 1, x: 0 });
+        slide.classList.remove('active');
       }
     });
 
-    // Synchronized UI and Image transition
-    // 1. UI Fades out as image starts blurring
-    tl.to([this.elements.currentTitleEl, this.elements.currentIdxEl], {
-      opacity: 0,
-      y: 10,
-      duration: 0.4,
-      ease: "power2.in",
-      onComplete: () => {
-        this.currentImageIndex = newIndex;
-        this.updateGalleryUI();
-      }
-    }, 0);
+    // Special behavior for swiping: Direct slide transition
+    if (type.includes('swipe')) {
+      const direction = type === 'swipe-right' ? 1 : -1;
 
-    tl.to(currentSlide, {
-      opacity: 0,
-      filter: 'blur(40px)',
-      scale: 0.9,
-      duration: 1.2,
-      ease: "power2.inOut"
-    }, 0);
+      gsap.set(nextSlide, { opacity: 1, x: direction * window.innerWidth, zIndex: 10, filter: 'none', scale: 1 });
+      gsap.set(currentSlide, { zIndex: 5 });
 
-    // 2. UI Fades in as image blurs into focus
-    tl.to([this.elements.currentTitleEl, this.elements.currentIdxEl], {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: "power3.out"
-    }, 0.6);
+      this.currentTimeline = gsap.timeline({
+        onComplete: () => {
+          slides.forEach(s => s.classList.remove('active'));
+          nextSlide.classList.add('active');
+          gsap.set(currentSlide, { x: 0, opacity: 0 });
+          this.isAnimating = false;
+          this.currentTimeline = null;
+        }
+      });
 
-    tl.to(nextSlide, {
-      opacity: 1,
-      filter: 'blur(0px)',
-      scale: 1,
-      duration: 1.5,
-      ease: "power4.out"
-    }, 0.4);
+      this.currentTimeline.to(currentSlide, {
+        x: -direction * (window.innerWidth * 0.3),
+        opacity: 0.5,
+        duration: duration,
+        ease: "power3.inOut"
+      }, 0);
+
+      this.currentTimeline.to(nextSlide, {
+        x: 0,
+        duration: duration,
+        ease: "power3.out"
+      }, 0);
+
+    } else {
+      // Classic fade transition for buttons and auto-play
+      const blurAmount = isMobile ? '0px' : '30px';
+      gsap.set(nextSlide, { opacity: 0, filter: isMobile ? 'none' : `blur(${blurAmount})`, scale: isMobile ? 1 : 1.1, zIndex: 10, x: 0 });
+      gsap.set(currentSlide, { zIndex: 5 });
+
+      this.currentTimeline = gsap.timeline({
+        onComplete: () => {
+          slides.forEach(s => s.classList.remove('active'));
+          nextSlide.classList.add('active');
+          this.isAnimating = false;
+          this.currentTimeline = null;
+        }
+      });
+
+      this.currentTimeline.to(currentSlide, {
+        opacity: 0,
+        filter: isMobile ? 'none' : `blur(40px)`,
+        scale: isMobile ? 1 : 0.9,
+        duration: duration,
+        ease: "power2.inOut"
+      }, 0);
+
+      this.currentTimeline.to(nextSlide, {
+        opacity: 1,
+        filter: 'blur(0px)',
+        scale: 1,
+        duration: duration + 0.3,
+        ease: "power4.out"
+      }, isMobile ? 0 : 0.2);
+    }
   }
 
   updateGalleryUI() {
