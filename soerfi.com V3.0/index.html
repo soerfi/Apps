@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOERFI.COM | Photographer</title>
+    <meta name="description"
+        content="Portfolio of SOERFI - Skateboarding, Portrait, and Impressions Photography. Minimalist and dark aesthetic.">
+
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@100;400;700;900&family=Space+Grotesk:wght@300;500&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body class="bg-black text-white overflow-hidden">
+
+    <!-- Loader -->
+    <div id="loader" class="fixed inset-0 z-[100] bg-black flex items-center justify-center">
+        <div
+            class="logo-loader text-3xl md:text-5xl font-black tracking-tighter opacity-0 scale-90 blur-md transition-all flex items-center">
+            <span class="w-2 h-2 bg-white mr-1 rounded-full"></span>
+            SOERFI<span class="text-gray-500">.COM</span>
+        </div>
+    </div>
+
+    <!-- Header / Logo -->
+    <header
+        class="fixed top-0 left-0 w-full z-50 p-8 flex justify-between items-center mix-blend-difference pointer-events-none">
+        <div class="logo pointer-events-auto">
+            <a href="/" class="text-3xl font-black tracking-tighter flex items-center group">
+                <span
+                    class="logo-dot w-2 h-2 bg-white mr-1 rounded-full group-hover:scale-150 transition-all duration-300"></span>
+                SOERFI<span class="text-gray-500">.COM</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Landing Page (Typographic Menu) -->
+    <main id="app" class="relative w-full h-screen overflow-hidden flex items-center justify-center">
+
+        <!-- Category Landing -->
+        <div id="landing-screen" class="container mx-auto px-8 z-30 transition-all duration-1000">
+            <ul class="nav-links flex flex-col gap-4 md:gap-8">
+                <!-- Links will be injected here via main.js -->
+            </ul>
+        </div>
+
+        <!-- Image Canvas Container (Hidden by default) -->
+        <div id="gallery-container"
+            class="absolute inset-0 opacity-0 pointer-events-none transition-opacity duration-1000"></div>
+
+        <!-- UI elements for gallery -->
+        <div id="gallery-ui" class="fixed bottom-0 left-0 w-full p-8 z-30 pointer-events-none opacity-0">
+            <div class="flex justify-between items-end">
+                <div class="image-info">
+                    <p id="current-category" class="text-xs uppercase tracking-widest text-gray-400 mb-1"></p>
+                    <h2 id="current-title" class="text-2xl font-bold"></h2>
+                </div>
+                <div class="gallery-controls flex items-center gap-6 pointer-events-auto">
+                    <button id="slideshow-btn" class="slideshow-btn p-2 text-gray-400 hover:text-white transition-all"
+                        title="Toggle Slideshow (Space)">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+                    <div class="flex gap-4">
+                        <button id="prev-btn"
+                            class="p-2 border border-white/20 hover:border-white rounded-full transition-colors">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-arrow-left">
+                                <path d="m12 19-7-7 7-7" />
+                                <path d="M19 12H5" />
+                            </svg>
+                        </button>
+                        <button id="next-btn"
+                            class="p-2 border border-white/20 hover:border-white rounded-full transition-colors">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="lucide lucide-arrow-right">
+                                <path d="M5 12h14" />
+                                <path d="m12 5 7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="counter" class="text-xs flex items-center gap-1">
+                        <span id="progress-current" class="text-white">01</span>
+                        <div class="w-8 h-px bg-white/20 relative overflow-hidden">
+                            <div id="progress-bar"
+                                class="absolute left-0 top-0 h-full bg-white w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="progress-total" class="text-gray-400">40</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div id="about-section"
+            class="absolute inset-0 z-40 flex items-center justify-center p-8 pointer-events-none opacity-0 bg-black/80 backdrop-blur-md transition-all duration-1000">
+            <div class="max-w-2xl text-center space-y-8">
+                <h1 id="about-title" class="text-6xl md:text-9xl font-black tracking-tighter"></h1>
+                <p id="about-text" class="text-xl md:text-2xl font-light leading-relaxed text-gray-300"></p>
+                <div class="pt-8">
+                    <a id="about-contact" href="#"
+                        class="inline-block px-10 py-4 border border-white text-sm uppercase tracking-widest hover:bg-white hover:text-black transition-all">Get
+                        in touch</a>
+                </div>
+                <div class="pt-4">
+                    <button id="close-about"
+                        class="text-xs uppercase tracking-widest text-gray-500 hover:text-white transition-colors cursor-pointer">Back
+                        to overview</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#09090b',
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

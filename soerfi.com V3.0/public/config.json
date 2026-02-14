@@ -1,0 +1,68 @@
+{
+    "title": "SOERFI.COM",
+    "categories": [
+        {
+            "id": "skateboarding",
+            "label": "Skateboarding",
+            "subcategories": [
+                {
+                    "id": "skateboarding-color",
+                    "label": "Color",
+                    "path": "skateboarding-color",
+                    "images": []
+                },
+                {
+                    "id": "skateboarding-bw",
+                    "label": "Black & White",
+                    "path": "skateboarding-bw",
+                    "images": []
+                }
+            ]
+        },
+        {
+            "id": "people",
+            "label": "People",
+            "subcategories": [
+                {
+                    "id": "people-color",
+                    "label": "Color",
+                    "path": "people-color",
+                    "images": []
+                },
+                {
+                    "id": "people-bw",
+                    "label": "Black & White",
+                    "path": "people-bw",
+                    "images": []
+                }
+            ]
+        },
+        {
+            "id": "impressions",
+            "label": "Impressions",
+            "subcategories": [
+                {
+                    "id": "impressions-color",
+                    "label": "Color",
+                    "path": "impressions-color",
+                    "images": []
+                },
+                {
+                    "id": "impressions-bw",
+                    "label": "Black & White",
+                    "path": "impressions-bw",
+                    "images": []
+                }
+            ]
+        },
+        {
+            "id": "about",
+            "label": "About",
+            "content": {
+                "title": "SOERFI",
+                "text": "a long time ago I shot some photos",
+                "contact": "soerfi@gmail.com"
+            }
+        }
+    ]
+}
