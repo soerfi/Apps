@@ -1,0 +1,21 @@
+services:
+  # Main Frontend & Menu
+  app-suite:
+    build: .
+    container_name: app-suite
+    ports:
+      - "80:80"
+    volumes:
+      - ./data/menu:/app/data
+    restart: unless-stopped
+
+  # QR Analytics Backend
+  qr-backend:
+    build: "./apps/qr-wizard"
+    container_name: qr-backend
+    environment:
+      - PUBLIC_BASE_URL=http://72.62.43.134
+      - IP_HASH_SALT=secure-v3-salt
+    volumes:
+      - ./data/qr:/app/data
+    restart: unless-stopped

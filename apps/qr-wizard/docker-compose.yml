@@ -1,0 +1,20 @@
+services:
+  qr-analytics:
+    build:
+      context: .
+    container_name: qr-code-analytics
+    ports:
+      - "5000:5000"
+    environment:
+      PUBLIC_BASE_URL: "http://localhost:5000"
+      DATABASE_URL: "sqlite:////app/data/qr_tracker.db"
+      IP_HASH_SALT: "replace-with-secure-random"
+      UNIQUE_WINDOW_HOURS: "24"
+      DATA_RETENTION_DAYS: "365"
+      TRACKING_PARAM: "qr_tid"
+    volumes:
+      - qr_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  qr_data:

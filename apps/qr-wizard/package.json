@@ -1,0 +1,8 @@
+{
+    "name": "qr-analytics",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "build": "mkdir -p dist/static && cp templates/index.html dist/index.html && cp -r static/* dist/static/ && node -e \"const fs=require('fs'); let h=fs.readFileSync('dist/index.html','utf8'); fs.writeFileSync('dist/index.html', h.replace(/\\/static\\//g, 'static/'))\""
+    }
+}

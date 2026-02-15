@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Analytics | Premium Tracking</title>
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <!-- Icon Set -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Charting Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="static/styles.css" />
+</head>
+
+<body class="dark-theme">
+  <div id="toast-container"></div>
+
+  <header class="topbar">
+    <div class="brand-group">
+      <div class="logo-icon"><i data-lucide="qr-code"></i></div>
+      <h1>QR Analytics <span>Pro</span></h1>
+    </div>
+    <div class="actions">
+      <div class="export-options">
+        <label>Export Size</label>
+        <select id="global-export-size" class="glass-select small">
+          <option value="400">Standard (400px)</option>
+          <option value="800">HD (800px)</option>
+          <option value="1200">Print (1200px)</option>
+          <option value="2400">Ultra (2400px)</option>
+        </select>
+      </div>
+      <a href="api/export/qrcodes.csv" class="btn-secondary"><i data-lucide="download"></i> QR Library</a>
+      <a href="api/export/scans.csv" class="btn-secondary"><i data-lucide="database"></i> Scan Data</a>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Creation & Import Sidebar -->
+    <aside class="sidebar">
+      <section class="card glass">
+        <div class="card-header">
+          <i data-lucide="plus-circle"></i>
+          <h2>Create QR</h2>
+        </div>
+        <form id="create-form" class="stack-form">
+          <div class="field">
+            <label>Destination URL</label>
+            <input name="destination_url" type="url" required placeholder="https://example.com" />
+          </div>
+          <div class="field">
+            <label>Campaign Name</label>
+            <input name="name" type="text" placeholder="e.g. Winter Sale 2024" />
+          </div>
+
+          <details class="advanced-settings">
+            <summary>Metadata & UTMs</summary>
+            <div class="grid-2">
+              <input name="campaign" type="text" placeholder="Campaign" />
+              <input name="channel" type="text" placeholder="Channel" />
+              <input name="location" type="text" placeholder="Location" />
+              <input name="asset" type="text" placeholder="Asset" />
+              <div class="field-inline">
+                <label>Deadline</label>
+                <input name="expires_at" type="date" />
+              </div>
+            </div>
+            <div class="utm-fields">
+              <input name="utm_source" type="text" placeholder="UTM Source" />
+              <input name="utm_medium" type="text" placeholder="UTM Medium" />
+            </div>
+            <label class="checkline">
+              <input name="auto_append_utm" type="checkbox" />
+              <span>Auto UTM Append</span>
+            </label>
+          </details>
+
+          <button type="submit" class="btn-primary">Generate QR Code</button>
+        </form>
+        <div id="create-output" class="mini-output"></div>
+      </section>
+
+      <section class="card glass">
+        <div class="card-header">
+          <i data-lucide="upload-cloud"></i>
+          <h2>Bulk Import</h2>
+        </div>
+        <p class="hint">Upload CSV with <code>destination_url</code> column.</p>
+        <div id="bulk-output" class="feedback-area"></div>
+        <form id="bulk-form" class="dropzone">
+          <input name="file" type="file" accept=".csv" id="csv-upload" hidden />
+          <label for="csv-upload" class="file-label">
+            <i data-lucide="file-type"></i>
+            <span id="file-label-text">Select CSV File</span>
+          </label>
+          <button type="submit" id="bulk-submit-btn" class="btn-secondary small" style="display: none;">Upload
+            Now</button>
+        </form>
+      </section>
+    </aside>
+
+    <!-- Main Dashboard Content -->
+    <div class="dashboard-main">
+      <section class="card glass analytics-section">
+        <div class="section-head">
+          <div class="title-group">
+            <i data-lucide="bar-chart-3"></i>
+            <h2>Analytics & Insights</h2>
+          </div>
+          <form id="analytics-filter" class="filter-bar extended">
+            <div class="global-filters">
+              <select name="campaign" id="filter-campaign" class="glass-select">
+                <option value="">All Campaigns</option>
+              </select>
+              <select name="channel" id="filter-channel" class="glass-select">
+                <option value="">All Channels</option>
+              </select>
+            </div>
+            <div class="time-controls">
+              <div class="date-range-pill">
+                <input name="start" type="date" aria-label="Start Date" />
+                <span class="sep">→</span>
+                <input name="end" type="date" aria-label="End Date" />
+              </div>
+              <select name="granularity" class="granularity-select glass-select">
+                <option value="day">Daily</option>
+                <option value="hour">Hourly</option>
+                <option value="week">Weekly</option>
+                <option value="month">Monthly</option>
+              </select>
+              <button type="submit" class="btn-icon refresh-btn"><i data-lucide="refresh-cw"></i></button>
+            </div>
+          </form>
+        </div>
+
+        <div id="summary" class="summary-stats"></div>
+
+        <div class="main-chart-container">
+          <canvas id="scansChart"></canvas>
+        </div>
+
+        <div class="breakdown-grid">
+          <div class="table-card">
+            <div class="table-header">
+              <h3>Top Performing QRs</h3>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>QR Code</th>
+                    <th>Total</th>
+                    <th>Unique</th>
+                  </tr>
+                </thead>
+                <tbody id="top-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-header">
+              <div class="flex-between">
+                <h3>Distribution</h3>
+                <select id="breakdown-select" class="small-select">
+                  <option value="campaign">Campaign</option>
+                  <option value="location">Location</option>
+                  <option value="country">Country</option>
+                  <option value="device">Device</option>
+                  <option value="os">OS</option>
+                  <option value="browser">Browser</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Label</th>
+                    <th>Total</th>
+                    <th>Unique</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdown-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card glass library-section">
+        <div class="section-head">
+          <div class="title-group">
+            <i data-lucide="library"></i>
+            <h2>QR Library</h2>
+            <div id="library-stats" class="pill-group"></div>
+          </div>
+          <form id="library-filter" class="search-bar">
+            <div class="search-input">
+              <i data-lucide="search"></i>
+              <input name="q" type="search" placeholder="Search QRs..." />
+            </div>
+            <select name="status" class="glass-select">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="archived">Archived</option>
+            </select>
+          </form>
+          <div id="bulk-toolbar" class="bulk-toolbar" style="display: none;">
+            <span id="bulk-count">0 selected</span>
+            <div class="actions">
+              <button class="btn-secondary small" onclick="bulkEdit()">Edit</button>
+              <div class="bulk-download-group">
+                <button class="btn-secondary small" onclick="bulkDownload('png')">ZIP (PNG)</button>
+                <button class="btn-secondary small" onclick="bulkDownload('svg')">ZIP (SVG)</button>
+                <button class="btn-secondary small" onclick="bulkDownload('pdf')">ZIP (PDF)</button>
+              </div>
+              <button class="btn-danger small" onclick="bulkDelete()">Delete</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="library-table">
+            <thead>
+              <tr>
+                <th class="check-col"><input type="checkbox" id="select-all" /></th>
+                <th class="sortable" onclick="sortLibrary('name')">Identity <i data-lucide="chevrons-up-down"></i></th>
+                <th class="sortable" onclick="sortLibrary('destination_url')">Destination <i
+                    data-lucide="chevrons-up-down"></i></th>
+                <th class="sortable" onclick="sortLibrary('status')">Status <i data-lucide="chevrons-up-down"></i></th>
+                <th class="sortable" onclick="sortLibrary('created_at')">Created <i data-lucide="chevrons-up-down"></i>
+                </th>
+                <th class="sortable" onclick="sortLibrary('total_scans')">Scans <i data-lucide="chevrons-up-down"></i>
+                </th>
+                <th class="actions-col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="library-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal-overlay">
+      <div class="modal card glass">
+        <div class="modal-header">
+          <h2>Edit QR Code</h2>
+          <button class="close-btn" onclick="closeEditModal()"><i data-lucide="x"></i></button>
+        </div>
+        <form id="edit-form" class="stack-form">
+          <input type="hidden" name="id" />
+          <div class="field">
+            <label>Destination URL</label>
+            <input name="destination_url" type="url" required />
+          </div>
+          <div class="field">
+            <label>Name</label>
+            <input name="name" type="text" />
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Campaign</label>
+              <input name="campaign" type="text" />
+            </div>
+            <div class="field">
+              <label>Channel</label>
+              <input name="channel" type="text" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Location</label>
+              <input name="location" type="text" />
+            </div>
+            <div class="field">
+              <label>Owner</label>
+              <input name="owner" type="text" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Asset ID</label>
+              <input name="asset" type="text" />
+            </div>
+            <div class="field">
+              <label>Deadline (Auto-Archive)</label>
+              <input name="expires_at" type="date" />
+            </div>
+          </div>
+
+          <details class="advanced-settings" open>
+            <summary>UTM Parameters</summary>
+            <div class="utm-fields">
+              <input name="utm_source" type="text" placeholder="Source" />
+              <input name="utm_medium" type="text" placeholder="Medium" />
+              <input name="utm_campaign" type="text" placeholder="Campaign" />
+              <input name="utm_term" type="text" placeholder="Term" />
+              <input name="utm_content" type="text" placeholder="Content" />
+            </div>
+            <label class="checkline">
+              <input name="auto_append_utm" type="checkbox" />
+              <span>Auto Append UTMs</span>
+            </label>
+          </details>
+
+          <div class="modal-actions space-between">
+            <div class="left-actions">
+              <button type="button" class="btn-danger" id="delete-btn-trigger" onclick="showDeleteConfirm()">Delete
+                QR</button>
+            </div>
+            <div class="right-actions">
+              <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+              <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+          </div>
+          <div id="delete-confirm-box" class="confirm-overlay" style="display: none;">
+            <div class="confirm-card glass">
+              <i data-lucide="alert-triangle" class="danger-icon"></i>
+              <h3>Delete QR Code?</h3>
+              <p>This will permanently remove all tracking data and scans associated with this code.</p>
+              <div class="confirm-actions">
+                <button type="button" class="btn-secondary small" onclick="hideDeleteConfirm()">Back</button>
+                <button type="button" class="btn-danger small"
+                  onclick="deleteQR(document.forms['edit-form'].id.value)">Confirm Delete</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bulk Edit Modal -->
+    <div id="bulk-modal" class="modal-overlay">
+      <div class="modal card glass">
+        <div class="modal-header">
+          <h2>Bulk Edit <span id="bulk-modal-count"></span></h2>
+          <button class="close-btn" onclick="closeBulkModal()"><i data-lucide="x"></i></button>
+        </div>
+        <form id="bulk-edit-form" class="stack-form">
+          <p class="hint">Only filled fields will be updated.</p>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Campaign</label>
+              <input name="campaign" type="text" placeholder="(No Change)" />
+            </div>
+            <div class="field">
+              <label>Channel</label>
+              <input name="channel" type="text" placeholder="(No Change)" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Location</label>
+              <input name="location" type="text" placeholder="(No Change)" />
+            </div>
+            <div class="field">
+              <label>Owner</label>
+              <input name="owner" type="text" placeholder="(No Change)" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Status</label>
+              <select name="status" class="glass-select">
+                <option value="">(No Change)</option>
+                <option value="active">Active</option>
+                <option value="paused">Paused</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Auto Append UTM</label>
+              <select name="auto_append_utm" class="glass-select">
+                <option value="">(No Change)</option>
+                <option value="true">Enable</option>
+                <option value="false">Disable</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" class="btn-secondary" onclick="closeBulkModal()">Cancel</button>
+            <button type="submit" class="btn-primary">Update All</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="static/app.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

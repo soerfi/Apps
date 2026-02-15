@@ -17,3 +17,20 @@ cookies.txt
 .agent/
 .agent_backup/
 TCG Homepage/_archive/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Databases
+*.db
+instance/
+
+# IDEs
+.vscode/
+
+# Temp
+test_qr.py
+test_download.py
