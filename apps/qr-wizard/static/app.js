@@ -22,6 +22,9 @@ async function api(url, options = {}) {
   const contentType = res.headers.get("content-type") || "";
   const body = contentType.includes("application/json") ? await res.json() : await res.text();
   if (!res.ok) {
+    if (res.status === 401 && !url.includes("api/login")) {
+      document.getElementById("login-overlay").classList.add("active");
+    }
     const message = body && body.error ? body.error : `Request failed (${res.status})`;
     throw new Error(message);
   }
@@ -143,6 +146,9 @@ window.editQR = async (id) => {
       form.expires_at.value = "";
     }
 
+    if (form.goal_name) form.goal_name.value = item.goal_name || "";
+    if (form.goal_target) form.goal_target.value = item.goal_target || "";
+
     modal.classList.add("active");
     window.hideDeleteConfirm();
   } catch (e) {
@@ -187,10 +193,21 @@ window.closeBulkModal = () => {
   document.getElementById("bulk-modal").classList.remove("active");
 };
 
+window.showBulkDeleteConfirm = () => {
+  const selected = getSelectedIds();
+  if (!selected.length) return;
+  document.getElementById("bulk-delete-details").textContent = selected.length;
+  document.getElementById("bulk-delete-confirm").style.display = "flex";
+  lucide.createIcons();
+};
+
+window.hideBulkDeleteConfirm = () => {
+  document.getElementById("bulk-delete-confirm").style.display = "none";
+};
+
 window.bulkDelete = async () => {
   const selected = getSelectedIds();
   if (!selected.length) return;
-  if (!confirm(`Delete ${selected.length} QR codes and all their data?`)) return;
 
   try {
     await api("api/qrcodes/bulk_action", {
@@ -198,6 +215,7 @@ window.bulkDelete = async () => {
       body: JSON.stringify({ action: "delete", ids: selected })
     });
     showToast(`Deleted ${selected.length} codes`);
+    window.hideBulkDeleteConfirm();
     loadLibrary();
     loadAnalytics();
     clearSelection();
@@ -422,12 +440,13 @@ function renderLibrary() {
     const status = escapeHtml(item.status);
     const destination = escapeHtml(item.destination_url);
     const trackingLink = `${window.location.origin}/t/${item.slug}`;
-    const exportSize = document.getElementById('global-export-size')?.value || 400;
+    const createdDate = new Date(item.created_at).toLocaleDateString();
     const campaignPill = item.campaign
       ? `<span class="pill campaign-pill" onclick="filterByCampaign('${escapeHtml(item.campaign)}')">${escapeHtml(item.campaign)}</span>`
       : '';
 
-    const createdDate = new Date(item.created_at).toLocaleDateString();
+    // Use the value from the new location of the select
+    const exportSize = document.getElementById('global-export-size')?.value || 400;
 
     return `
       <tr data-id="${item.id}">
@@ -473,16 +492,15 @@ function renderLibrary() {
             <div class="download-formats">
               <a href="api/qrcodes/${item.id}/download?format=png&size=${exportSize}" title="PNG">PNG</a>
               <a href="api/qrcodes/${item.id}/download?format=svg&size=${exportSize}" title="SVG">SVG</a>
-              <a href="api/qrcodes/${item.id}/download?format=pdf&size=${exportSize}" title="PDF">PDF</a>
             </div>
           </div>
         </td>
       </tr>
     `;
   }).join("");
-
   lucide.createIcons();
 }
+
 
 // --- Analytics Loading ---
 async function loadAnalytics() {
@@ -640,6 +658,13 @@ function setupHandlers() {
     loadLibrary();
   });
 
+  // Export Size Listener - Fix for not updating
+  document.addEventListener('change', (e) => {
+    if (e.target.id === 'global-export-size') {
+      renderLibrary();
+    }
+  });
+
   document.getElementById("analytics-filter").addEventListener("submit", (e) => {
     e.preventDefault();
     // handled by change events mostly
@@ -742,11 +767,65 @@ function setupHandlers() {
       btn.textContent = "Save Changes";
     }
   });
+
+  // ESC key to close modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      window.closeEditModal?.();
+      window.closeBulkModal?.();
+      window.closeHistoryModal?.();
+      window.hideDeleteConfirm?.();
+      window.hideBulkDeleteConfirm?.();
+    }
+  });
+
+  // Login Form
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    try {
+      const fd = new FormData(e.target);
+      const payload = Object.fromEntries(fd.entries());
+      await api("api/login", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      showToast("Access Granted");
+      document.getElementById("login-overlay").classList.remove("active");
+      loadLibrary();
+      loadAnalytics();
+      loadAnalyticsOptions();
+    } catch (err) {
+      showToast("Invalid password", "error");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
+async function checkAuth() {
+  try {
+    const status = await api("api/auth_status");
+    if (status.authenticated) {
+      document.getElementById("login-overlay").classList.remove("active");
+      return true;
+    } else {
+      document.getElementById("login-overlay").classList.add("active");
+      return false;
+    }
+  } catch (err) {
+    document.getElementById("login-overlay").classList.add("active");
+    return false;
+  }
 }
 
 // --- Bootstrap ---
 (async function init() {
   setupHandlers();
-  loadAnalyticsOptions(); // Load options first but don't block
-  await Promise.all([loadLibrary(), loadAnalytics()]);
+  const authed = await checkAuth();
+  if (authed) {
+    loadAnalyticsOptions();
+    await Promise.all([loadLibrary(), loadAnalytics()]);
+  }
 })();

@@ -21,24 +21,33 @@
 <body class="dark-theme">
   <div id="toast-container"></div>
 
+  <!-- Login Overlay -->
+  <div id="login-overlay" class="modal-overlay auth-overlay active">
+    <div class="modal login-modal glass">
+      <div class="modal-header">
+        <div class="brand-group">
+          <div class="logo-icon"><i data-lucide="qr-code"></i></div>
+          <h2>Admin Login</h2>
+        </div>
+      </div>
+      <form id="login-form" class="stack-form">
+        <div class="field">
+          <label>Password</label>
+          <input type="password" name="password" required placeholder="Enter admin password"
+            autocomplete="current-password" />
+        </div>
+        <button type="submit" class="btn-primary full-width">Unlock Dashboard</button>
+      </form>
+    </div>
+  </div>
+
   <header class="topbar">
     <div class="brand-group">
       <div class="logo-icon"><i data-lucide="qr-code"></i></div>
       <h1>QR Analytics <span>Pro</span></h1>
     </div>
-    <div class="actions">
-      <div class="export-options">
-        <label>Export Size</label>
-        <select id="global-export-size" class="glass-select small">
-          <option value="400">Standard (400px)</option>
-          <option value="800">HD (800px)</option>
-          <option value="1200">Print (1200px)</option>
-          <option value="2400">Ultra (2400px)</option>
-        </select>
-      </div>
-      <a href="api/export/qrcodes.csv" class="btn-secondary"><i data-lucide="download"></i> QR Library</a>
-      <a href="api/export/scans.csv" class="btn-secondary"><i data-lucide="database"></i> Scan Data</a>
-    </div>
+    <a href="api/export/qrcodes.csv" class="btn-secondary"><i data-lucide="download"></i> QR Library</a>
+    <a href="api/export/scans.csv" class="btn-secondary"><i data-lucide="database"></i> Scan Data</a>
   </header>
 
   <main class="layout">
@@ -62,11 +71,27 @@
           <details class="advanced-settings">
             <summary>Metadata & UTMs</summary>
             <div class="grid-2">
-              <input name="campaign" type="text" placeholder="Campaign" />
-              <input name="channel" type="text" placeholder="Channel" />
-              <input name="location" type="text" placeholder="Location" />
-              <input name="asset" type="text" placeholder="Asset" />
-              <div class="field-inline">
+              <div class="field">
+                <label>Campaign</label>
+                <input name="campaign" type="text" placeholder="e.g. Winter2024" />
+              </div>
+              <div class="field">
+                <label>Channel</label>
+                <input name="channel" type="text" placeholder="e.g. Social" />
+              </div>
+              <div class="field">
+                <label>Location</label>
+                <input name="location" type="text" placeholder="e.g. Berlin" />
+              </div>
+              <div class="field">
+                <label>Asset ID</label>
+                <input name="asset" type="text" placeholder="e.g. B-01" />
+              </div>
+              <div class="field">
+                <label>Owner</label>
+                <input name="owner" type="text" placeholder="e.g. Marketing" />
+              </div>
+              <div class="field">
                 <label>Deadline</label>
                 <input name="expires_at" type="date" />
               </div>
@@ -74,11 +99,26 @@
             <div class="utm-fields">
               <input name="utm_source" type="text" placeholder="UTM Source" />
               <input name="utm_medium" type="text" placeholder="UTM Medium" />
+              <input name="utm_campaign" type="text" placeholder="UTM Campaign" />
+              <input name="utm_term" type="text" placeholder="UTM Term" />
+              <input name="utm_content" type="text" placeholder="UTM Content" />
             </div>
             <label class="checkline">
               <input name="auto_append_utm" type="checkbox" />
               <span>Auto UTM Append</span>
             </label>
+          </details>
+
+          <details class="advanced-settings">
+            <summary>Conversion Goal</summary>
+            <div class="field">
+              <label>Goal Name</label>
+              <input name="goal_name" type="text" placeholder="e.g. Purchase" />
+            </div>
+            <div class="field">
+              <label>Target URL Success Match</label>
+              <input name="goal_target" type="text" placeholder="/success" />
+            </div>
           </details>
 
           <button type="submit" class="btn-primary">Generate QR Code</button>
@@ -103,6 +143,7 @@
             Now</button>
         </form>
       </section>
+
     </aside>
 
     <!-- Main Dashboard Content -->
@@ -212,17 +253,37 @@
               <option value="paused">Paused</option>
               <option value="archived">Archived</option>
             </select>
+            <div class="library-settings">
+              <label>Size:</label>
+              <select id="global-export-size" class="glass-select tiny">
+                <option value="400">400px</option>
+                <option value="800">800px</option>
+                <option value="1200">1200px</option>
+                <option value="2400">2400px</option>
+              </select>
+            </div>
           </form>
           <div id="bulk-toolbar" class="bulk-toolbar" style="display: none;">
-            <span id="bulk-count">0 selected</span>
-            <div class="actions">
-              <button class="btn-secondary small" onclick="bulkEdit()">Edit</button>
-              <div class="bulk-download-group">
-                <button class="btn-secondary small" onclick="bulkDownload('png')">ZIP (PNG)</button>
-                <button class="btn-secondary small" onclick="bulkDownload('svg')">ZIP (SVG)</button>
-                <button class="btn-secondary small" onclick="bulkDownload('pdf')">ZIP (PDF)</button>
+            <div class="bulk-info">
+              <span id="bulk-count">0 selected</span>
+              <button class="btn-danger tiny" onclick="showBulkDeleteConfirm()" title="Delete Selection"><i
+                  data-lucide="trash-2"></i></button>
+            </div>
+            <div class="bulk-actions-group">
+              <button class="btn-secondary small" onclick="bulkEdit()">Edit Metadata</button>
+            </div>
+          </div>
+
+          <!-- Bulk Delete Confirm -->
+          <div id="bulk-delete-confirm" class="confirm-overlay" style="display: none;">
+            <div class="confirm-card glass">
+              <i data-lucide="alert-triangle" class="danger-icon"></i>
+              <h3>Delete Selected?</h3>
+              <p>You are about to permanently delete <span id="bulk-delete-details">0</span> items.</p>
+              <div class="confirm-actions">
+                <button class="btn-secondary small" onclick="hideBulkDeleteConfirm()">Back</button>
+                <button class="btn-danger small" onclick="bulkDelete()">Confirm Delete</button>
               </div>
-              <button class="btn-danger small" onclick="bulkDelete()">Delete</button>
             </div>
           </div>
         </div>
@@ -312,6 +373,18 @@
               <input name="auto_append_utm" type="checkbox" />
               <span>Auto Append UTMs</span>
             </label>
+          </details>
+
+          <details class="advanced-settings" open>
+            <summary>Conversion Goal</summary>
+            <div class="field">
+              <label>Goal Name</label>
+              <input name="goal_name" type="text" placeholder="e.g. Purchase" />
+            </div>
+            <div class="field">
+              <label>Target URL Success Match</label>
+              <input name="goal_target" type="text" placeholder="/success" />
+            </div>
           </details>
 
           <div class="modal-actions space-between">

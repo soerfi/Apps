@@ -23,7 +23,9 @@ from flask import (
     render_template,
     request,
     send_file,
+    session,
 )
+from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
@@ -39,6 +41,9 @@ app.config["UNIQUE_WINDOW_HOURS"] = int(os.getenv("UNIQUE_WINDOW_HOURS", "24"))
 app.config["DATA_RETENTION_DAYS"] = int(os.getenv("DATA_RETENTION_DAYS", "365"))
 app.config["PUBLIC_BASE_URL"] = os.getenv("PUBLIC_BASE_URL", "").strip()
 app.config["TRACKING_PARAM"] = os.getenv("TRACKING_PARAM", "qr_tid")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "a-very-secret-internal-key-12345")
+# The password provided: asof$dSSDWggt89
+app.config["ADMIN_PASSWORD_HASH"] = os.getenv("ADMIN_PASSWORD_HASH", "scrypt:32768:8:1$6jrKvL9KGbYOoKZG$7896820a48846f40b52b191a2b1391675b2993e3fe6a8dc9885cb9591003f06d9e2b1f475cc674ae57757d09237b84cf3b6efe77f294eae21a2077f55ac86978")
 
 
 db = SQLAlchemy(app)
@@ -364,7 +369,7 @@ def append_tracking_param(url, slug):
 
 
 def qr_to_dict(qr_code, scan_count=None):
-    return {
+    res = {
         "id": qr_code.id,
         "slug": qr_code.slug,
         "tracking_url": f"{app.config['PUBLIC_BASE_URL'].rstrip('/') if app.config['PUBLIC_BASE_URL'] else ''}/t/{qr_code.slug}" if app.config["PUBLIC_BASE_URL"] else None,
@@ -388,7 +393,16 @@ def qr_to_dict(qr_code, scan_count=None):
         "created_at": qr_code.created_at.isoformat(),
         "updated_at": qr_code.updated_at.isoformat(),
         "expires_at": qr_code.expires_at.isoformat() if qr_code.expires_at else None,
+        # Integrated Primary Goal
+        "goal_name": None,
+        "goal_target": None
     }
+    # Attach first active goal if exists
+    primary_goal = Goal.query.filter_by(qr_code_id=qr_code.id, active=True).first()
+    if primary_goal:
+        res["goal_name"] = primary_goal.name
+        res["goal_target"] = primary_goal.target_url
+    return res
 
 
 def save_history(qr_code_id, action, details=None):
@@ -544,29 +558,6 @@ def build_qr_image(data, fmt, size_px=400):
         final_buffer = io.BytesIO(svg_data.encode("utf-8"))
         return final_buffer, "image/svg+xml", "svg"
 
-    if fmt == "pdf":
-        # Generate a high-res PNG for the PDF to ensure quality
-        img_obj = qr.make_image(fill_color="black", back_color="white")
-        pil_img = img_obj._img
-        resampling = getattr(Image, 'Resampling', Image).NEAREST
-        pil_img = pil_img.resize((size_px * 2, size_px * 2), resampling) # double resolution for PDF sharpness
-
-        png_buffer = io.BytesIO()
-        pil_img.save(png_buffer, format="PNG")
-        png_buffer.seek(0)
-
-        pdf_buffer = io.BytesIO()
-        # PDF pagesize in points (1/72 inch). 
-        pdf_size = (size_px, size_px) 
-        canvas_doc = canvas.Canvas(pdf_buffer, pagesize=pdf_size)
-        canvas_doc.setTitle("QR Code Export")
-        img_reader = ImageReader(png_buffer)
-        # Draw the high-res image scaled to the page size
-        canvas_doc.drawImage(img_reader, 0, 0, width=size_px, height=size_px, mask="auto")
-        canvas_doc.showPage()
-        canvas_doc.save()
-        pdf_buffer.seek(0)
-        return pdf_buffer, "application/pdf", "pdf"
 
     raise ValueError("Unsupported format")
 
@@ -586,9 +577,41 @@ def purge_old_data(days):
     return deleted_scans, deleted_conversions
 
 
+@app.before_request
+def require_auth():
+    # Public routes that dont need login
+    public_paths = ["/api/login", "/static/", "/favicon.ico"]
+    if request.path.startswith("/t/") or request.path in public_paths or request.path.startswith("/static/"):
+        return
+        
+    if not session.get("authenticated"):
+        if request.path.startswith("/api/"):
+            return jsonify({"error": "Unauthorized"}), 401
+        # For the main page, we still serve the template, but the JS will show the login overlay
+        # Alternatively, we could redirect, but showing an overlay is smoother for a SPA-like app
+        pass
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    password = data.get("password")
+    if password and check_password_hash(app.config["ADMIN_PASSWORD_HASH"], password):
+        session["authenticated"] = True
+        return jsonify({"success": True})
+    return jsonify({"error": "Invalid password"}), 401
+
+@app.route("/api/logout", methods=["POST"])
+def logout():
+    session.pop("authenticated", None)
+    return jsonify({"success": True})
+
+@app.route("/api/auth_status")
+def auth_status():
+    return jsonify({"authenticated": session.get("authenticated", False)})
 
 
 @app.route("/health")
@@ -633,6 +656,14 @@ def create_qr_code():
 
     db.session.add(qr)
     db.session.flush()
+
+    # Integrated Goal Creation
+    goal_name = (payload.get("goal_name") or "").strip()
+    goal_target = (payload.get("goal_target") or "").strip()
+    if goal_name:
+        new_goal = Goal(qr_code_id=qr.id, name=goal_name, target_url=goal_target or None, active=True)
+        db.session.add(new_goal)
+
     save_history(qr.id, "created", json.dumps({"destination_url": destination_url}))
     db.session.commit()
 
@@ -895,6 +926,28 @@ def update_qr_code(qr_code_id):
             setattr(qr, field, value.strip() if isinstance(value, str) else value)
             changes[field] = getattr(qr, field)
 
+    # Goal Management
+    goal_name = (payload.get("goal_name") or "").strip()
+    goal_target = (payload.get("goal_target") or "").strip()
+    
+    # We find existing primary goal (one linked to this QR)
+    existing_goal = Goal.query.filter_by(qr_code_id=qr.id).first()
+    
+    if goal_name:
+        if existing_goal:
+            existing_goal.name = goal_name
+            existing_goal.target_url = goal_target or None
+            existing_goal.active = True
+        else:
+            new_goal = Goal(qr_code_id=qr.id, name=goal_name, target_url=goal_target or None, active=True)
+            db.session.add(new_goal)
+        changes["goal_updated"] = True
+    elif "goal_name" in payload and not goal_name:
+        # User explicitly emptied goal_name -> deactivate or delete goal
+        if existing_goal:
+            db.session.delete(existing_goal)
+            changes["goal_deleted"] = True
+
     db.session.add(qr)
     if changes:
         save_history(qr.id, "updated", json.dumps(changes))
@@ -959,7 +1012,7 @@ def bulk_actions():
     elif action == "download_zip":
         fmt = (payload.get("format") or "png").lower()
         size_px = payload.get("size", 400)
-        if fmt not in {"png", "svg", "pdf"}:
+        if fmt not in {"png", "svg"}:
             return jsonify({"error": "Invalid format"}), 400
 
         zip_buffer = io.BytesIO()
@@ -1020,8 +1073,8 @@ def download_qr_code(qr_code_id):
     size_px = request.args.get("size", 400, type=int)
     data = tracking_url(qr.slug)
 
-    if fmt not in {"png", "svg", "pdf"}:
-        return jsonify({"error": "format must be png, svg, or pdf"}), 400
+    if fmt not in {"png", "svg"}:
+        return jsonify({"error": "format must be png or svg"}), 400
 
     buffer, mime_type, ext = build_qr_image(data, fmt, size_px=size_px)
     
